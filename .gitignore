@@ -21,7 +21,6 @@ yarn.lock
 Thumbs.db
 
 # Build and Debug
-dist
 build
 coverage
 .next

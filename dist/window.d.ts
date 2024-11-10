@@ -9,7 +9,7 @@ type BotProps = {
     theme?: BubbleTheme;
     showVideo?: boolean;
     interactiveAvatar?: {
-        quality?: "low" | "medium" | "high";
+        quality?: 'low' | 'medium' | 'high';
         avatarName?: string;
         voice?: {
             voiceId: string;

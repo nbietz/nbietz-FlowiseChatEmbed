@@ -121,6 +121,10 @@ You can also customize chatbot with different configuration
         tooltipTextColor: 'white',
         tooltipFontSize: 16,
       },
+      disclaimer: {
+        title: 'Disclaimer',
+        message: 'By using this chatbot, you agree to the <a target="_blank" href="https://flowiseai.com/terms">Terms & Condition</a>',
+      },
       chatWindow: {
         showTitle: true,
         showAgentMessages: true,
@@ -136,7 +140,8 @@ You can also customize chatbot with different configuration
         starterPrompts: ['What is a bot?', 'Who are you?'], // It overrides the starter prompts set by the chat flow passed
         starterPromptFontSize: 15,
         clearChatOnReload: false, // If set to true, the chat will be cleared when the page reloads
-        sourceDocsTitle: 'Sources:'
+        sourceDocsTitle: 'Sources:',
+        renderHTML: true,
         botMessage: {
           backgroundColor: '#f7f8ff',
           textColor: '#303235',
@@ -165,16 +170,16 @@ You can also customize chatbot with different configuration
         feedback: {
           color: '#303235',
         },
+        dateTimeToggle: {
+          date: true,
+          time: true,
+        },
         footer: {
           textColor: '#303235',
           text: 'Powered by',
           company: 'Flowise',
           companyLink: 'https://flowiseai.com',
         },
-        disclaimer: {
-          title: 'Disclaimer',
-          message: 'By using this chatbot, you agree to the <a target="_blank" href="https://flowiseai.com/terms">Terms & Condition</a>',
-        }
       },
     },
   });

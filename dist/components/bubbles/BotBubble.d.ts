@@ -1,4 +1,5 @@
 import { IAction, MessageType } from '../Bot';
+import { DateTimeToggleTheme } from '@/features/bubble/types';
 type Props = {
     message: MessageType;
     chatflowid: string;
@@ -14,10 +15,14 @@ type Props = {
     fontSize?: number;
     feedbackColor?: string;
     isLoading: boolean;
+    dateTimeToggle?: DateTimeToggleTheme;
     showAgentMessages?: boolean;
+    sourceDocsTitle?: string;
+    renderHTML?: boolean;
     handleActionClick: (label: string, action: IAction | undefined | null) => void;
+    handleSourceDocumentsClick: (src: any) => void;
     interactiveAvatar?: {
-        quality?: "low" | "medium" | "high";
+        quality?: 'low' | 'medium' | 'high';
         avatarName?: string;
         voice?: {
             voiceId: string;

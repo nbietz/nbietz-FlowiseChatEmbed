@@ -1,5 +1,8 @@
 import { createSignal, createEffect, onCleanup, Show } from 'solid-js';
-import { Configuration, NewSessionData, StreamingAvatarApi } from '@heygen/streaming-avatar';
+import NewSessionData from '@heygen/streaming-avatar';
+import StreamingAvatarApi from '@heygen/streaming-avatar';
+import Configuration from '@heygen/streaming-avatar';
+import { AvatarQuality } from '@heygen/streaming-avatar';
 
 type InteractiveAvatarProps = {
   onSpeakReady: (speakFunction: (text: string) => void) => void;
@@ -76,20 +79,15 @@ export default function InteractiveAvatar(props: InteractiveAvatarProps) {
         avatarName: props.avatarName,
         voiceId: props.voiceId,
       });
-      const res = await avatar.current.createStartAvatar(
-        {
-          newSessionRequest: {
-            quality: props.quality || 'medium',
-            avatarName: props.avatarName || 'Kristin_public_2_20240108',
-            voice: { voiceId: props.voiceId || '1bd001e7e50f421d891986aad5158bc8' },
-          },
-        },
-        setDebug,
-      );
+      const res = await avatar.current.createStartAvatar({
+        quality: (props.quality || AvatarQuality.Medium) as AvatarQuality,
+        avatarName: props.avatarName || 'Kristin_public_2_20240108',
+        voice: { voiceId: props.voiceId || '1bd001e7e50f421d891986aad5158bc8' },
+      });
       setData(res);
       console.log('Session started:', data());
       setDebug(`Session started ${res.sessionId}`);
-      setStream(avatar.current.mediaStream);
+      setStream(avatar.current.mediaStream || undefined);
       console.log('Stream set:', stream()?.id);
     } catch (error) {
       console.error('Error starting avatar session:', error);
@@ -101,7 +99,7 @@ export default function InteractiveAvatar(props: InteractiveAvatarProps) {
   async function updateToken() {
     const newToken = await fetchAccessToken();
     console.log('Updating Access Token (length):', newToken.length);
-    avatar.current = new StreamingAvatarApi(new Configuration({ accessToken: newToken }));
+    avatar.current = new StreamingAvatarApi({ token: newToken });
 
     const startTalkCallback = (e: any) => {
       console.log('Avatar started talking', e);
@@ -112,8 +110,8 @@ export default function InteractiveAvatar(props: InteractiveAvatarProps) {
     };
 
     console.log('Adding event handlers to:', avatar.current);
-    avatar.current.addEventHandler('avatar_start_talking', startTalkCallback);
-    avatar.current.addEventHandler('avatar_stop_talking', stopTalkCallback);
+    avatar.current.on('avatar_start_talking', startTalkCallback);
+    avatar.current.on('avatar_stop_talking', stopTalkCallback);
 
     setInitialized(true);
     console.log('Avatar API initialized with new token');
@@ -124,7 +122,7 @@ export default function InteractiveAvatar(props: InteractiveAvatarProps) {
       setDebug('Avatar API not initialized');
       return;
     }
-    await avatar.current.interrupt({ interruptRequest: { sessionId: data()?.sessionId } }).catch((e) => {
+    await avatar.current.interrupt().catch((e) => {
       setDebug(e.message);
     });
   }
@@ -134,24 +132,28 @@ export default function InteractiveAvatar(props: InteractiveAvatarProps) {
       setDebug('Avatar API not initialized');
       return;
     }
-    await avatar.current.stopAvatar({ stopSessionRequest: { sessionId: data()?.sessionId } }, setDebug);
+    try {
+      await avatar.current.stopAvatar();
+    } catch (error) {
+      setDebug(error instanceof Error ? error.message : 'Failed to stop avatar');
+    }
     setStream(undefined);
   }
 
   const handleSpeak = async (speakText: string) => {
     console.log('handleSpeak called with text:', speakText);
-    if (!initialized() || !avatar.current || !data()?.sessionId) {
+    if (!initialized() || !avatar.current) {
       console.log('Avatar API not initialized or session not started', {
         initialized: initialized(),
         avatarCurrent: !!avatar.current,
-        sessionId: data()?.sessionId,
+//        sessionId: data()?.getSessionId(),
       });
       setDebug('Avatar API not initialized or session not started');
       return;
     }
-    console.log('Attempting to speak with session ID:', data()?.sessionId);
+    console.log('Attempting to speak');
     try {
-      await avatar.current.speak({ taskRequest: { text: speakText, sessionId: data()?.sessionId } });
+      await avatar.current.speak({ text: speakText });
       console.log('Speech request sent successfully');
     } catch (error: unknown) {
       console.error('Error in handleSpeak:', error);
@@ -166,18 +168,18 @@ export default function InteractiveAvatar(props: InteractiveAvatarProps) {
 
   // Call onSpeakReady when the component is ready to speak
   createEffect(() => {
-    if (initialized() && avatar.current && data()?.sessionId) {
+    if (initialized() && avatar.current) {
       console.log('InteractiveAvatar ready to speak', {
         initialized: initialized(),
         avatarCurrent: !!avatar.current,
-        sessionId: data()?.sessionId,
+//        sessionId: data()?.getSessionId(),
       });
       props.onSpeakReady(handleSpeak);
     } else {
       console.log('InteractiveAvatar not ready to speak', {
         initialized: initialized(),
         avatarCurrent: !!avatar.current,
-        sessionId: data()?.sessionId,
+//        sessionId: data()?.getSessionId(),
       });
     }
   });
@@ -187,7 +189,7 @@ export default function InteractiveAvatar(props: InteractiveAvatarProps) {
     async function init() {
       const newToken = await fetchAccessToken();
       console.log('Obtained HeyGen Access Token (length):', newToken.length);
-      avatar.current = new StreamingAvatarApi(new Configuration({ accessToken: newToken, jitterBuffer: 200 }));
+      avatar.current = new StreamingAvatarApi({ token: newToken });
       setInitialized(true);
       console.log('Avatar API initialized');
       setDebug('Avatar API initialized');
