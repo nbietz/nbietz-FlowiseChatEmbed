@@ -131,7 +131,7 @@ export type BotProps = {
   disclaimer?: DisclaimerPopUpTheme;
   showVideo?: boolean;
   interactiveAvatar?: {
-    quality?: "low" | "medium" | "high";
+    quality?: 'low' | 'medium' | 'high';
     avatarName?: string;
     voice?: {
       voiceId: string;
@@ -154,7 +154,7 @@ const defaultBackgroundColor = '#ffffff';
 const defaultTextColor = '#303235';
 
 export const Bot = (botProps: BotProps & { class?: string }) => {
-  console.log("Bot props received:", botProps);
+  console.log('Bot props received:', botProps);
   // set a default value for showTitle if not set and merge with other props
   const props = mergeProps({ showTitle: true }, botProps);
   let chatContainer: HTMLDivElement | undefined;
@@ -459,13 +459,15 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
       else if (data.json) speakText = JSON.stringify(data.json, null, 2);
       else speakText = JSON.stringify(data, null, 2);
       // Log speakText to the console
-      console.log("Text to speak:", speakText);
-       {/* This in where the text is sent to the avatar to be spoken */}
-       if (speakFunction()) {
-        console.log("Calling speak function");
+      console.log('Text to speak:', speakText);
+      {
+        /* This in where the text is sent to the avatar to be spoken */
+      }
+      if (speakFunction()) {
+        console.log('Calling speak function');
         speakFunction()?.(speakText);
       } else {
-        console.log("Speak function is not available");
+        console.log('Speak function is not available');
       }
       const question = data.question;
       if (value === '' && question) {
@@ -1077,9 +1079,9 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
             'min-height': '200px',
           }}
         >
-          <InteractiveAvatar 
+          <InteractiveAvatar
             onSpeakReady={(speakFn) => {
-              console.log("Speak function received from InteractiveAvatar");
+              console.log('Speak function received from InteractiveAvatar');
               setSpeakFunction(() => speakFn);
             }}
             quality={props.interactiveAvatar?.quality}
@@ -1118,7 +1120,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
               <span style={{ 'font-family': 'Poppins, sans-serif' }}>Clear</span>
             </DeleteButton>
           </div>
-          ) : null}
+        ) : null}
         {/* Chatbot content */}
         <div class="flex flex-col w-full flex-grow justify-start z-0 overflow-hidden">
           <div

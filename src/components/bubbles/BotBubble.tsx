@@ -26,7 +26,7 @@ type Props = {
   showAgentMessages?: boolean;
   handleActionClick: (label: string, action: IAction | undefined | null) => void;
   interactiveAvatar?: {
-    quality?: "low" | "medium" | "high";
+    quality?: 'low' | 'medium' | 'high';
     avatarName?: string;
     voice?: {
       voiceId: string;

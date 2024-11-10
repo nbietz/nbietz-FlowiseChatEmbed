@@ -1,27 +1,18 @@
-import { createSignal, createEffect, onCleanup, Show } from "solid-js";
-import {
-  Configuration,
-  NewSessionData,
-  StreamingAvatarApi,
-} from "@heygen/streaming-avatar";
+import { createSignal, createEffect, onCleanup, Show } from 'solid-js';
+import { Configuration, NewSessionData, StreamingAvatarApi } from '@heygen/streaming-avatar';
 
 type InteractiveAvatarProps = {
   onSpeakReady: (speakFunction: (text: string) => void) => void;
-  quality?: "low" | "medium" | "high";
+  quality?: 'low' | 'medium' | 'high';
   avatarName?: string;
   voiceId?: string;
 };
 
-export default function InteractiveAvatar({ 
-  onSpeakReady, 
-  quality, 
-  avatarName, 
-  voiceId 
-}: InteractiveAvatarProps) {
-  console.log("InteractiveAvatar props received:", { 
-    quality: quality || "undefined", 
-    avatarName: avatarName || "undefined", 
-    voiceId: voiceId || "undefined" 
+export default function InteractiveAvatar(props: InteractiveAvatarProps) {
+  console.log('InteractiveAvatar props received:', {
+    quality: props.quality || 'undefined',
+    avatarName: props.avatarName || 'undefined',
+    voiceId: props.voiceId || 'undefined',
   });
   const [isLoadingSession, setIsLoadingSession] = createSignal(false);
   const [isLoadingRepeat, setIsLoadingRepeat] = createSignal(false);
@@ -31,15 +22,9 @@ export default function InteractiveAvatar({
   const [initialized, setInitialized] = createSignal(false);
   const [canvasStream, setCanvasStream] = createSignal<MediaStream | null>(null);
   let mediaStream: HTMLVideoElement | undefined;
-  let avatar = { current: null as StreamingAvatarApi | null };
+  const avatar = { current: null as StreamingAvatarApi | null };
   let canvasRef: HTMLCanvasElement | undefined;
-  const HEYGEN_API_KEY_PARTS = [
-    "YzA3ZGJ",
-    "jNmEyM2YwNGF",
-    "iNGIxZGE3MDAxOG",
-    "U3YjQ3YzgtMT",
-    "cwODE2MDQxOA=="
-  ];
+  const HEYGEN_API_KEY_PARTS = ['YzA3ZGJ', 'jNmEyM2YwNGF', 'iNGIxZGE3MDAxOG', 'U3YjQ3YzgtMT', 'cwODE2MDQxOA=='];
   //   "YWM3NjEx",
   //   "ZTk3M2U4NDVjM",
   //   "zlhZTlmYzhmOTI4M",
@@ -47,137 +32,133 @@ export default function InteractiveAvatar({
   //   "zU4MzM1MA=="
   // ];
 
-  console.log("InteractiveAvatar props received:", { quality, avatarName, voiceId });
+  console.log('InteractiveAvatar props received:', {
+    quality: props.quality,
+    avatarName: props.avatarName,
+    voiceId: props.voiceId,
+  });
 
   const getHeygenApiKey = () => HEYGEN_API_KEY_PARTS.join('');
 
   async function fetchAccessToken() {
     try {
       if (!getHeygenApiKey()) {
-        throw new Error("API key is missing from .env");
+        throw new Error('API key is missing from .env');
       }
-  
-      const res = await fetch(
-        "https://api.heygen.com/v1/streaming.create_token",
-        {
-          method: "POST",
-          headers: {
-            "x-api-key": getHeygenApiKey(),
-          },
-        }
-      );
+
+      const res = await fetch('https://api.heygen.com/v1/streaming.create_token', {
+        method: 'POST',
+        headers: {
+          'x-api-key': getHeygenApiKey(),
+        },
+      });
       const data = await res.json();
       return data.data.token;
     } catch (error) {
-      console.error("Error retrieving access token:", error);
-  
-      return new Response("Failed to retrieve access token", {
+      console.error('Error retrieving access token:', error);
+
+      return new Response('Failed to retrieve access token', {
         status: 500,
       });
     }
-    }
+  }
 
   async function startSession() {
     setIsLoadingSession(true);
     await updateToken();
     if (!avatar.current) {
-      setDebug("Avatar API is not initialized");
+      setDebug('Avatar API is not initialized');
       return;
     }
     try {
-      console.log("Starting session with params:", { quality, avatarName, voiceId });
+      console.log('Starting session with params:', {
+        quality: props.quality,
+        avatarName: props.avatarName,
+        voiceId: props.voiceId,
+      });
       const res = await avatar.current.createStartAvatar(
         {
           newSessionRequest: {
-            quality: quality || "medium",
-            avatarName: avatarName || "Kristin_public_2_20240108",
-            voice: { voiceId: voiceId || "1bd001e7e50f421d891986aad5158bc8" },
+            quality: props.quality || 'medium',
+            avatarName: props.avatarName || 'Kristin_public_2_20240108',
+            voice: { voiceId: props.voiceId || '1bd001e7e50f421d891986aad5158bc8' },
           },
         },
-        setDebug
+        setDebug,
       );
       setData(res);
-      console.log("Session started:", data());
+      console.log('Session started:', data());
       setDebug(`Session started ${res.sessionId}`);
       setStream(avatar.current.mediaStream);
-      console.log("Stream set:", stream()?.id);
+      console.log('Stream set:', stream()?.id);
     } catch (error) {
-      console.error("Error starting avatar session:", error);
-      setDebug(
-        `There was an error starting the session. ${voiceId ? "This custom Voice or Avatar may not be supported." : ""}`
-      );
+      console.error('Error starting avatar session:', error);
+      setDebug(`There was an error starting the session. ${props.voiceId ? 'This custom Voice or Avatar may not be supported.' : ''}`);
     }
     setIsLoadingSession(false);
   }
 
   async function updateToken() {
     const newToken = await fetchAccessToken();
-    console.log("Updating Access Token (length):", newToken.length);
-    avatar.current = new StreamingAvatarApi(
-      new Configuration({ accessToken: newToken })
-    );
+    console.log('Updating Access Token (length):', newToken.length);
+    avatar.current = new StreamingAvatarApi(new Configuration({ accessToken: newToken }));
 
     const startTalkCallback = (e: any) => {
-      console.log("Avatar started talking", e);
+      console.log('Avatar started talking', e);
     };
 
     const stopTalkCallback = (e: any) => {
-      console.log("Avatar stopped talking", e);
+      console.log('Avatar stopped talking', e);
     };
 
-    console.log("Adding event handlers to:", avatar.current);
-    avatar.current.addEventHandler("avatar_start_talking", startTalkCallback);
-    avatar.current.addEventHandler("avatar_stop_talking", stopTalkCallback);
+    console.log('Adding event handlers to:', avatar.current);
+    avatar.current.addEventHandler('avatar_start_talking', startTalkCallback);
+    avatar.current.addEventHandler('avatar_stop_talking', stopTalkCallback);
 
     setInitialized(true);
-    console.log("Avatar API initialized with new token");
+    console.log('Avatar API initialized with new token');
   }
 
   async function handleInterrupt() {
     if (!initialized() || !avatar.current) {
-      setDebug("Avatar API not initialized");
+      setDebug('Avatar API not initialized');
       return;
     }
-    await avatar.current
-      .interrupt({ interruptRequest: { sessionId: data()?.sessionId } })
-      .catch((e) => {
-        setDebug(e.message);
-      });
+    await avatar.current.interrupt({ interruptRequest: { sessionId: data()?.sessionId } }).catch((e) => {
+      setDebug(e.message);
+    });
   }
 
   async function endSession() {
     if (!initialized() || !avatar.current) {
-      setDebug("Avatar API not initialized");
+      setDebug('Avatar API not initialized');
       return;
     }
-    await avatar.current.stopAvatar(
-      { stopSessionRequest: { sessionId: data()?.sessionId } },
-      setDebug
-    );
+    await avatar.current.stopAvatar({ stopSessionRequest: { sessionId: data()?.sessionId } }, setDebug);
     setStream(undefined);
   }
 
   const handleSpeak = async (speakText: string) => {
-    console.log("handleSpeak called with text:", speakText);
+    console.log('handleSpeak called with text:', speakText);
     if (!initialized() || !avatar.current || !data()?.sessionId) {
-      console.log("Avatar API not initialized or session not started", {
+      console.log('Avatar API not initialized or session not started', {
         initialized: initialized(),
         avatarCurrent: !!avatar.current,
         sessionId: data()?.sessionId,
       });
-      setDebug("Avatar API not initialized or session not started");
+      setDebug('Avatar API not initialized or session not started');
       return;
     }
-    console.log("Attempting to speak with session ID:", data()?.sessionId);
+    console.log('Attempting to speak with session ID:', data()?.sessionId);
     try {
       await avatar.current.speak({ taskRequest: { text: speakText, sessionId: data()?.sessionId } });
-      console.log("Speech request sent successfully");
+      console.log('Speech request sent successfully');
     } catch (error: unknown) {
-      console.error("Error in handleSpeak:", error);
+      console.error('Error in handleSpeak:', error);
       if (error instanceof Error) {
         setDebug(error.message);
       } else {
-        setDebug("An unknown error occurred");
+        setDebug('An unknown error occurred');
       }
     }
     setIsLoadingRepeat(false);
@@ -186,14 +167,14 @@ export default function InteractiveAvatar({
   // Call onSpeakReady when the component is ready to speak
   createEffect(() => {
     if (initialized() && avatar.current && data()?.sessionId) {
-      console.log("InteractiveAvatar ready to speak", {
+      console.log('InteractiveAvatar ready to speak', {
         initialized: initialized(),
         avatarCurrent: !!avatar.current,
         sessionId: data()?.sessionId,
       });
-      onSpeakReady(handleSpeak);
+      props.onSpeakReady(handleSpeak);
     } else {
-      console.log("InteractiveAvatar not ready to speak", {
+      console.log('InteractiveAvatar not ready to speak', {
         initialized: initialized(),
         avatarCurrent: !!avatar.current,
         sessionId: data()?.sessionId,
@@ -205,20 +186,18 @@ export default function InteractiveAvatar({
     // Initialize avatar API
     async function init() {
       const newToken = await fetchAccessToken();
-      console.log("Obtained HeyGen Access Token (length):", newToken.length);
-      avatar.current = new StreamingAvatarApi(
-        new Configuration({ accessToken: newToken, jitterBuffer: 200 })
-      );
+      console.log('Obtained HeyGen Access Token (length):', newToken.length);
+      avatar.current = new StreamingAvatarApi(new Configuration({ accessToken: newToken, jitterBuffer: 200 }));
       setInitialized(true);
-      console.log("Avatar API initialized");
-      setDebug("Avatar API initialized");
+      console.log('Avatar API initialized');
+      setDebug('Avatar API initialized');
     }
     init();
 
     startSession();
 
     onCleanup(() => {
-      console.log("Cleaning up InteractiveAvatar");
+      console.log('Cleaning up InteractiveAvatar');
       endSession();
     });
   });
@@ -234,17 +213,19 @@ export default function InteractiveAvatar({
         const playPromise = mediaStream.play();
 
         if (playPromise !== undefined) {
-          playPromise.then(() => {
-            console.log("Autoplay started");
-            setDebug("Playing");
-            applyChromaKey();
-            setIsReady(true);
-          }).catch(error => {
-            console.error("Autoplay was prevented:", error);
-            setDebug("Autoplay blocked. Click to play.");
-            // You might want to show a play button here
-            // For now, we'll just log the error and set a debug message
-          });
+          playPromise
+            .then(() => {
+              console.log('Autoplay started');
+              setDebug('Playing');
+              applyChromaKey();
+              setIsReady(true);
+            })
+            .catch((error) => {
+              console.error('Autoplay was prevented:', error);
+              setDebug('Autoplay blocked. Click to play.');
+              // You might want to show a play button here
+              // For now, we'll just log the error and set a debug message
+            });
         }
       };
     }
@@ -316,61 +297,54 @@ export default function InteractiveAvatar({
   }
 
   return (
-      <div class="h-full flex flex-col justify-center items-center">
-        <div class="relative h-full flex justify-center items-center">
-          {stream() ? (
-            <div class="relative h-full flex justify-center items-center">
-              <video
-                ref={mediaStream}
-                autoplay
-                playsinline
-                style={{ display: 'none' }}
-              >
-                <track kind="captions" />
-              </video>
-              <canvas
-                ref={canvasRef}
+    <div class="h-full flex flex-col justify-center items-center">
+      <div class="relative h-full flex justify-center items-center">
+        {stream() ? (
+          <div class="relative h-full flex justify-center items-center">
+            <video ref={mediaStream} autoplay playsinline style={{ display: 'none' }}>
+              <track kind="captions" />
+            </video>
+            <canvas
+              ref={canvasRef}
+              style={{
+                height: '100%',
+                width: 'auto',
+                'max-width': 'none',
+                'min-width': '200px',
+                'min-height': '140px',
+                'object-fit': 'contain',
+                background: 'transparent',
+              }}
+            />
+            <div class="absolute bottom-2 right-2 flex flex-col gap-2">
+              <button
+                onClick={handleInterrupt}
+                class="chatbot-button text-xs font-semibold rounded px-2 py-1 transition-colors duration-200 shadow-sm"
                 style={{
-                  height: '100%',
-                  width: 'auto',
-                  'max-width': 'none',
-                  'min-width': '200px',
-                  'min-height': '140px',
-                  'object-fit': 'contain',
-                  background: 'transparent',
+                  'background-color': 'var(--chatbot-button-bg-color)',
+                  color: 'var(--chatbot-button-color)',
                 }}
-              />
-              <div class="absolute bottom-2 right-2 flex flex-col gap-2">
-                <button
-                  onClick={handleInterrupt}
-                  class="chatbot-button text-xs font-semibold rounded px-2 py-1 transition-colors duration-200 shadow-sm"
-                  style={{
-                    "background-color": "var(--chatbot-button-bg-color)",
-                    "color": "var(--chatbot-button-color)"
-                  }}
-                >
-                  Interrupt
-                </button>
-                <button
-                  onClick={endSession}
-                  class="chatbot-button text-xs font-semibold rounded px-2 py-1 transition-colors duration-200 shadow-sm"
-                  style={{
-                    "background-color": "var(--chatbot-button-bg-color)",
-                    "color": "var(--chatbot-button-color)"
-                  }}
-                >
-                  End
-                </button>
-              </div>
+              >
+                Interrupt
+              </button>
+              <button
+                onClick={endSession}
+                class="chatbot-button text-xs font-semibold rounded px-2 py-1 transition-colors duration-200 shadow-sm"
+                style={{
+                  'background-color': 'var(--chatbot-button-bg-color)',
+                  color: 'var(--chatbot-button-color)',
+                }}
+              >
+                End
+              </button>
             </div>
-          ) : !isLoadingSession() ? (
-            <div class="h-full w-full flex justify-center items-center">
-              {/* ... (loading content) */}
-            </div>
-          ) : (
-            <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
-          )}
-        </div>
+          </div>
+        ) : !isLoadingSession() ? (
+          <div class="h-full w-full flex justify-center items-center">{/* ... (loading content) */}</div>
+        ) : (
+          <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900" />
+        )}
       </div>
+    </div>
   );
 }
