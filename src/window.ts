@@ -9,6 +9,14 @@ type BotProps = {
   chatflowConfig?: Record<string, unknown>;
   observersConfig?: observersConfigType;
   theme?: BubbleTheme;
+  showVideo?: boolean;
+  interactiveAvatar?: {
+    quality?: "low" | "medium" | "high";
+    avatarName?: string;
+    voice?: {
+      voiceId: string;
+    };
+  };
 };
 
 let elementUsed: Element | undefined;

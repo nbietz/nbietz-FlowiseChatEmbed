@@ -16,6 +16,13 @@ type Props = {
     isLoading: boolean;
     showAgentMessages?: boolean;
     handleActionClick: (label: string, action: IAction | undefined | null) => void;
+    interactiveAvatar?: {
+        quality?: "low" | "medium" | "high";
+        avatarName?: string;
+        voice?: {
+            voiceId: string;
+        };
+    };
 };
 export declare const BotBubble: (props: Props) => import("solid-js").JSX.Element;
 export {};

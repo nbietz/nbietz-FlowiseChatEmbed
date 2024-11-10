@@ -77,6 +77,7 @@ export const Full = (props: FullProps, { element }: { element: HTMLElement }) =>
             chatflowid={props.chatflowid}
             chatflowConfig={props.chatflowConfig}
             apiHost={props.apiHost}
+            interactiveAvatar={props.interactiveAvatar}
             onRequest={props.onRequest}
             isFullPage={true}
             observersConfig={props.observersConfig}

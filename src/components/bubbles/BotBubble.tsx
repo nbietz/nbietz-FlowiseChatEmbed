@@ -25,6 +25,13 @@ type Props = {
   isLoading: boolean;
   showAgentMessages?: boolean;
   handleActionClick: (label: string, action: IAction | undefined | null) => void;
+  interactiveAvatar?: {
+    quality?: "low" | "medium" | "high";
+    avatarName?: string;
+    voice?: {
+      voiceId: string;
+    };
+  };
 };
 
 const defaultBackgroundColor = '#f7f8ff';

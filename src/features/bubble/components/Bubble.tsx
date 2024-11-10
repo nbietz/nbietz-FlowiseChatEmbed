@@ -97,7 +97,7 @@ export const Bubble = (props: BubbleProps) => {
           right: `${Math.min(buttonPosition().right, window.innerWidth - 410)}px`,
         }}
         class={
-          `fixed sm:right-5 rounded-lg w-full sm:w-[400px] max-h-[704px]` +
+          `fixed sm:right-5 rounded-lg w-full sm:w-[400px] max-h-[95vh]` +
           (isBotOpened() ? ' opacity-1' : ' opacity-0 pointer-events-none') +
           ` bottom-${chatWindowBottom}px`
         }
@@ -142,6 +142,7 @@ export const Bubble = (props: BubbleProps) => {
               chatflowid={props.chatflowid}
               chatflowConfig={props.chatflowConfig}
               apiHost={props.apiHost}
+              interactiveAvatar={props.interactiveAvatar}
               onRequest={props.onRequest}
               observersConfig={props.observersConfig}
               clearChatOnReload={bubbleProps.theme?.chatWindow?.clearChatOnReload}

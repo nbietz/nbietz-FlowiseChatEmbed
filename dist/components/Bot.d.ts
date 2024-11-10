@@ -90,6 +90,14 @@ export type BotProps = {
     starterPromptFontSize?: number;
     clearChatOnReload?: boolean;
     disclaimer?: DisclaimerPopUpTheme;
+    showVideo?: boolean;
+    interactiveAvatar?: {
+        quality?: "low" | "medium" | "high";
+        avatarName?: string;
+        voice?: {
+            voiceId: string;
+        };
+    };
 };
 export type LeadsConfig = {
     status: boolean;
