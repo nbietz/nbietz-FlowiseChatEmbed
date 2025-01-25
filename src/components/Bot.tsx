@@ -297,7 +297,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
           console.log('[Bot] Avatar disconnected');
           setAvatarStream(null);
           setIsAvatarTalking(false);
-        }
+        },
       });
       console.log('[Bot] Avatar session initialization complete');
     } catch (error) {
@@ -312,7 +312,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
         message,
         chatId: chatId(),
         metadata,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       await avatarManager.speak(message);
@@ -331,7 +331,6 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
   let chatContainer: HTMLDivElement | undefined;
   let bottomSpacer: HTMLDivElement | undefined;
   let botContainer: HTMLDivElement | undefined;
-  let isAvatarInitialized = false;
 
   const [userInput, setUserInput] = createSignal('');
   const [loading, setLoading] = createSignal(false);
@@ -387,18 +386,20 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
       apiHost: props.apiHost,
       avatar: props.avatar,
       chatflowid: props.chatflowid,
-      isFullPage: props.isFullPage
+      isFullPage: props.isFullPage,
     });
 
     // Initialize avatar when Bot component mounts
     if (props.avatar) {
       console.log('[Bot] Avatar configuration found:', props.avatar);
       console.log('[Bot] Starting avatar initialization');
-      initializeAvatar().then(() => {
-        console.log('[Bot] Avatar initialization completed');
-      }).catch((error) => {
-        console.error('[Bot] Avatar initialization failed:', error);
-      });
+      initializeAvatar()
+        .then(() => {
+          console.log('[Bot] Avatar initialization completed');
+        })
+        .catch((error) => {
+          console.error('[Bot] Avatar initialization failed:', error);
+        });
     } else {
       console.log('[Bot] No avatar configuration provided');
     }
@@ -713,7 +714,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
             abortMessage();
             closeResponse();
             break;
-          case 'end':
+          case 'end': {
             setLocalStorageChatflow(chatflowid, chatId);
             // Send complete message with metadata to InteractiveAvatar
             const lastMessage = messages()[messages().length - 1];
@@ -723,10 +724,11 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
               fileAnnotations: lastMessage.fileAnnotations,
               agentReasoning: lastMessage.agentReasoning,
               action: lastMessage.action,
-              artifacts: lastMessage.artifacts
+              artifacts: lastMessage.artifacts,
             });
             closeResponse();
             break;
+          }
         }
       },
       async onclose() {
@@ -918,7 +920,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
           fileAnnotations: data?.fileAnnotations,
           agentReasoning: data?.agentReasoning,
           action: data?.action,
-          artifacts: data?.artifacts
+          artifacts: data?.artifacts,
         });
 
         setMessages((prevMessages) => {
@@ -1508,10 +1510,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
         {/* Avatar Video Section */}
         <Show when={avatarStream()}>
           <div class="w-full h-[300px] bg-black">
-            <AvatarVideo 
-              class={isAvatarTalking() ? 'border-2 border-blue-500' : ''}
-              stream={avatarStream()}
-            />
+            <AvatarVideo class={isAvatarTalking() ? 'border-2 border-blue-500' : ''} stream={avatarStream()} />
           </div>
         </Show>
 

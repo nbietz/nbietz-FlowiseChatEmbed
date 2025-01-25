@@ -310,7 +310,7 @@ const handleProxy = async (req, res, targetPath) => {
       console.error('[Server] Proxy error:', {
         status: response.status,
         statusText: response.statusText,
-        error: errorText
+        error: errorText,
       });
       return res.status(response.status).send(errorText);
     }
@@ -389,25 +389,25 @@ app.post('/api/v1/attachments/:identifier/:chatId', upload.array('files'), async
 app.post('/api/v1/heygen/token', async (req, res) => {
   console.log('[Server] Received request for Heygen token');
   console.log('[Server] Using Heygen API Key:', HEYGEN_API_KEY.substring(0, 10) + '...');
-  
+
   try {
     console.log('[Server] Making request to Heygen API https://api.heygen.com/v1/streaming.create_token');
-    const response = await fetch("https://api.heygen.com/v1/streaming.create_token", {
+    const response = await fetch('https://api.heygen.com/v1/streaming.create_token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Api-Key': HEYGEN_API_KEY
-      }
+        'X-Api-Key': HEYGEN_API_KEY,
+      },
     });
     console.log('[Server] Heygen API response status:', response.status);
     console.log('[Server] Heygen API response headers:', response.headers.raw());
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       console.error('[Server] Heygen API error:', {
         status: response.status,
         statusText: response.statusText,
-        error: errorText
+        error: errorText,
       });
       return res.status(response.status).send(errorText);
     }
@@ -415,7 +415,7 @@ app.post('/api/v1/heygen/token', async (req, res) => {
     const jsonResponse = await response.json();
 
     console.log('[Server] Full Heygen API JSON response:', JSON.stringify(jsonResponse, null, 2));
-    
+
     if (jsonResponse.error) {
       console.error('[Server] Heygen API returned error:', jsonResponse.error);
       return res.status(400).json(jsonResponse);

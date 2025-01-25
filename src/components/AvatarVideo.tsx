@@ -21,7 +21,7 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
     handleStreamUpdate();
     if (videoRef) {
       videoRef.addEventListener('loadedmetadata', () => {
-        videoRef?.play().catch(error => {
+        videoRef?.play().catch((error) => {
           console.error('[AvatarVideo] Error playing video:', error);
         });
       });
@@ -40,7 +40,7 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
       class={`w-full h-full object-cover ${props.class || ''}`}
       style={{
         width: props.width || '100%',
-        height: props.height || '100%'
+        height: props.height || '100%',
       }}
       autoplay
       playsinline
@@ -49,4 +49,4 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
   );
 };
 
-export type { AvatarVideoProps }; 
+export type { AvatarVideoProps };

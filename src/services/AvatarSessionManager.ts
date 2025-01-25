@@ -26,10 +26,7 @@ export type AvatarSessionConfig = {
 class AvatarSessionManager {
   private static instance: AvatarSessionManager;
   private avatar: StreamingAvatar | null = null;
-  private apiHost: string = '';
-
-  constructor() {
-  }
+  private apiHost = '';
 
   static getInstance(): AvatarSessionManager {
     if (!AvatarSessionManager.instance) {
@@ -48,26 +45,26 @@ class AvatarSessionManager {
       const response = await fetch(`${this.apiHost}/api/v1/heygen/token`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       const token = await response.text();
 
       console.log('[AvatarSession] Token fetch response status:', response.status);
-      
+
       if (!response.ok) {
         console.error('[AvatarSession] Failed to fetch token:', {
           status: response.status,
           statusText: response.statusText,
-          error: token
+          error: token,
         });
         throw new Error(`Failed to fetch token: ${token}`);
       }
 
       const jsonResponse = JSON.parse(token);
       console.log('[AvatarSession] Full JSON token response:', JSON.stringify(jsonResponse, null, 2));
-      
+
       if (jsonResponse.error) {
         throw new Error(`Failed to fetch token: ${jsonResponse.error}`);
       }
@@ -85,7 +82,7 @@ class AvatarSessionManager {
       avatarId: config.avatarId,
       voiceId: config.voiceId,
       quality: config.quality,
-      language: config.language
+      language: config.language,
     });
 
     if (this.avatar) {
@@ -97,11 +94,11 @@ class AvatarSessionManager {
       this.apiHost = config.apiHost;
       const newToken = await this.fetchAccessToken();
       console.log('[AvatarSession] Initializing StreamingAvatar with token length:', newToken.length);
-      
+
       this.avatar = new StreamingAvatar({ token: newToken });
-      
+
       console.log('[AvatarSession] StreamingAvatar instance created');
-      
+
       this.avatar.on(StreamingEvents.STREAM_READY, (stream) => {
         console.log('[AvatarSession] Stream ready event received');
         config.onStreamReady?.(stream);
@@ -124,7 +121,7 @@ class AvatarSessionManager {
       });
 
       console.log('[AvatarSession] Event listeners attached');
-      
+
       const result = await this.avatar.createStartAvatar({
         quality: config.quality,
         avatarName: config.avatarId || '',
@@ -141,12 +138,11 @@ class AvatarSessionManager {
           // },
         },
         language: config.language || 'en',
-        disableIdleTimeout: config.disableIdleTimeout || false
+        disableIdleTimeout: config.disableIdleTimeout || false,
       });
 
       console.log('[AvatarSession] Avatar creation result:', result);
       console.log('[AvatarSession] Session ID:', result.sessionId);
-
     } catch (error) {
       console.error('[AvatarSession] Failed to initialize session:', error);
       this.avatar = null;
@@ -163,7 +159,7 @@ class AvatarSessionManager {
       await this.avatar.speak({
         text,
         taskMode: TaskMode.SYNC,
-        task_type: TaskType.TALK
+        task_type: TaskType.TALK,
       });
     } catch (error) {
       console.error('[AvatarSessionManager] Failed to speak:', error);
@@ -188,4 +184,4 @@ class AvatarSessionManager {
   }
 }
 
-export default AvatarSessionManager; 
+export default AvatarSessionManager;
