@@ -1,4 +1,4 @@
-import { createSignal, createEffect, For, onMount, Show, mergeProps, on, createMemo } from 'solid-js';
+import { createSignal, createEffect, For, onMount, Show, mergeProps, on, createMemo, onCleanup, JSX } from 'solid-js';
 import { v4 as uuidv4 } from 'uuid';
 import {
   sendMessageQuery,
@@ -36,6 +36,9 @@ import { removeLocalStorageChatHistory, getLocalStorageChatflow, setLocalStorage
 import { cloneDeep } from 'lodash';
 import { FollowUpPromptBubble } from '@/components/bubbles/FollowUpPromptBubble';
 import { fetchEventSource, EventStreamContentType } from '@microsoft/fetch-event-source';
+import StreamingAvatar, { AvatarQuality, StreamingEvents, TaskMode, TaskType } from '@heygen/streaming-avatar';
+import { AvatarVideo } from './AvatarVideo';
+import AvatarSessionManager, { AvatarConfig } from '../services/AvatarSessionManager';
 
 export type FileEvent<T = EventTarget> = {
   target: T;
@@ -126,6 +129,7 @@ export type observersConfigType = Record<'observeUserInput' | 'observeLoading' |
 export type BotProps = {
   chatflowid: string;
   apiHost?: string;
+  avatar?: AvatarConfig;
   onRequest?: (request: RequestInit) => Promise<void>;
   chatflowConfig?: Record<string, unknown>;
   welcomeMessage?: string;
@@ -171,7 +175,7 @@ const defaultWelcomeMessage = 'Hi there! How can I help?';
 
 /*const sourceDocuments = [
     {
-        "pageContent": "I know some are talking about “living with COVID-19”. Tonight – I say that we will never just accept living with COVID-19. \r\n\r\nWe will continue to combat the virus as we do other diseases. And because this is a virus that mutates and spreads, we will stay on guard. \r\n\r\nHere are four common sense steps as we move forward safely.  \r\n\r\nFirst, stay protected with vaccines and treatments. We know how incredibly effective vaccines are. If you’re vaccinated and boosted you have the highest degree of protection. \r\n\r\nWe will never give up on vaccinating more Americans. Now, I know parents with kids under 5 are eager to see a vaccine authorized for their children. \r\n\r\nThe scientists are working hard to get that done and we’ll be ready with plenty of vaccines when they do. \r\n\r\nWe’re also ready with anti-viral treatments. If you get COVID-19, the Pfizer pill reduces your chances of ending up in the hospital by 90%.",
+        "pageContent": "I know some are talking about "living with COVID-19". Tonight – I say that we will never just accept living with COVID-19. \r\n\r\nWe will continue to combat the virus as we do other diseases. And because this is a virus that mutates and spreads, we will stay on guard. \r\n\r\nHere are four common sense steps as we move forward safely.  \r\n\r\nFirst, stay protected with vaccines and treatments. We know how incredibly effective vaccines are. If you're vaccinated and boosted you have the highest degree of protection. \r\n\r\nWe will never give up on vaccinating more Americans. Now, I know parents with kids under 5 are eager to see a vaccine authorized for their children. \r\n\r\nThe scientists are working hard to get that done and we'll be ready with plenty of vaccines when they do. \r\n\r\nWe're also ready with anti-viral treatments. If you get COVID-19, the Pfizer pill reduces your chances of ending up in the hospital by 90%.",
         "metadata": {
           "source": "blob",
           "blobType": "",
@@ -184,7 +188,7 @@ const defaultWelcomeMessage = 'Hi there! How can I help?';
         }
     },
     {
-        "pageContent": "sistance,  and  polishing  [65].  For  instance,  AI  tools  generate\nsuggestions based on inputting keywords or topics. The tools\nanalyze  search  data,  trending  topics,  and  popular  queries  to\ncreate  fresh  content.  What’s  more,  AIGC  assists  in  writing\narticles and posting blogs on specific topics. While these tools\nmay not be able to produce high-quality content by themselves,\nthey can provide a starting point for a writer struggling with\nwriter’s block.\nH.  Cons of AIGC\nOne of the main concerns among the public is the potential\nlack  of  creativity  and  human  touch  in  AIGC.  In  addition,\nAIGC sometimes lacks a nuanced understanding of language\nand context, which may lead to inaccuracies and misinterpre-\ntations. There are also concerns about the ethics and legality\nof using AIGC, particularly when it results in issues such as\ncopyright  infringement  and  data  privacy.  In  this  section,  we\nwill discuss some of the disadvantages of AIGC (Table IV).",
+        "pageContent": "sistance,  and  polishing  [65].  For  instance,  AI  tools  generate\nsuggestions based on inputting keywords or topics. The tools\nanalyze  search  data,  trending  topics,  and  popular  queries  to\ncreate  fresh  content.  What's  more,  AIGC  assists  in  writing\narticles and posting blogs on specific topics. While these tools\nmay not be able to produce high-quality content by themselves,\nthey can provide a starting point for a writer struggling with\nwriter's block.\nH.  Cons of AIGC\nOne of the main concerns among the public is the potential\nlack  of  creativity  and  human  touch  in  AIGC.  In  addition,\nAIGC sometimes lacks a nuanced understanding of language\nand context, which may lead to inaccuracies and misinterpre-\ntations. There are also concerns about the ethics and legality\nof using AIGC, particularly when it results in issues such as\ncopyright  infringement  and  data  privacy.  In  this  section,  we\nwill discuss some of the disadvantages of AIGC (Table IV).",
         "metadata": {
           "source": "blob",
           "blobType": "",
@@ -250,12 +254,84 @@ const defaultBackgroundColor = '#ffffff';
 const defaultTextColor = '#303235';
 const defaultTitleBackgroundColor = '#3B81F6';
 
-export const Bot = (botProps: BotProps & { class?: string }) => {
+export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
+  const [avatarStream, setAvatarStream] = createSignal<MediaStream | null>(null);
+  const [isAvatarTalking, setIsAvatarTalking] = createSignal(false);
+  const avatarManager = AvatarSessionManager.getInstance();
+
+  const initializeAvatar = async () => {
+    if (!props.avatar) {
+      console.log('[Bot] No avatar configuration provided');
+      return;
+    }
+
+    try {
+      const { avatarId, voiceId, quality, language } = props.avatar;
+      console.log('[Bot] Initializing avatar with config:', { avatarId, voiceId, quality, language });
+
+      // if (!avatarId) {
+      //   console.error('[Bot] Missing required Heygen configuration:', { avatarId });
+      //   return;
+      // }
+
+      console.log('[Bot] Starting avatar session initialization');
+      await avatarManager.initializeSession({
+        avatarId,
+        voiceId,
+        apiHost: props.apiHost || '',
+        quality: quality ? AvatarQuality[quality as keyof typeof AvatarQuality] : AvatarQuality.Low,
+        language,
+        onStreamReady: (stream) => {
+          console.log('[Bot] Avatar stream ready');
+          setAvatarStream(stream);
+        },
+        onStartTalking: () => {
+          console.log('[Bot] Avatar started talking');
+          setIsAvatarTalking(true);
+        },
+        onStopTalking: () => {
+          console.log('[Bot] Avatar stopped talking');
+          setIsAvatarTalking(false);
+        },
+        onDisconnected: () => {
+          console.log('[Bot] Avatar disconnected');
+          setAvatarStream(null);
+          setIsAvatarTalking(false);
+        }
+      });
+      console.log('[Bot] Avatar session initialization complete');
+    } catch (error) {
+      console.error('[Bot] Failed to initialize avatar:', error);
+    }
+  };
+
+  const sendToInteractiveAvatar = async (message: string, metadata?: any) => {
+    try {
+      // Log for debugging
+      console.log('[InteractiveAvatar] Sending message to avatar:', {
+        message,
+        chatId: chatId(),
+        metadata,
+        timestamp: new Date().toISOString()
+      });
+
+      await avatarManager.speak(message);
+    } catch (error) {
+      console.error('[InteractiveAvatar] Error sending message to avatar:', error);
+    }
+  };
+
+  // Clean up function to stop the avatar when the component unmounts
+  const cleanupStreamingAvatar = () => {
+    avatarManager.endSession();
+  };
+
   // set a default value for showTitle if not set and merge with other props
   const props = mergeProps({ showTitle: true }, botProps);
   let chatContainer: HTMLDivElement | undefined;
   let bottomSpacer: HTMLDivElement | undefined;
   let botContainer: HTMLDivElement | undefined;
+  let isAvatarInitialized = false;
 
   const [userInput, setUserInput] = createSignal('');
   const [loading, setLoading] = createSignal(false);
@@ -307,8 +383,28 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   });
 
   onMount(() => {
-    if (botProps?.observersConfig) {
-      const { observeUserInput, observeLoading, observeMessages } = botProps.observersConfig;
+    console.log('[Bot] Component mounted with props:', {
+      apiHost: props.apiHost,
+      avatar: props.avatar,
+      chatflowid: props.chatflowid,
+      isFullPage: props.isFullPage
+    });
+
+    // Initialize avatar when Bot component mounts
+    if (props.avatar) {
+      console.log('[Bot] Avatar configuration found:', props.avatar);
+      console.log('[Bot] Starting avatar initialization');
+      initializeAvatar().then(() => {
+        console.log('[Bot] Avatar initialization completed');
+      }).catch((error) => {
+        console.error('[Bot] Avatar initialization failed:', error);
+      });
+    } else {
+      console.log('[Bot] No avatar configuration provided');
+    }
+
+    if (props.observersConfig) {
+      const { observeUserInput, observeLoading, observeMessages } = props.observersConfig;
       typeof observeUserInput === 'function' &&
         // eslint-disable-next-line solid/reactivity
         createMemo(() => {
@@ -330,6 +426,12 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
     setTimeout(() => {
       chatContainer?.scrollTo(0, chatContainer.scrollHeight);
     }, 50);
+  });
+
+  // Add cleanup for avatar session
+  onCleanup(() => {
+    console.log('[Bot] Component unmounting');
+    cleanupStreamingAvatar();
   });
 
   const scrollToBottom = () => {
@@ -580,6 +682,8 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
             break;
           case 'token':
             updateLastMessage(payload.data);
+            // Send each token to InteractiveAvatar
+            sendToInteractiveAvatar(payload.data);
             break;
           case 'sourceDocuments':
             updateLastMessageSourceDocuments(payload.data);
@@ -611,6 +715,16 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
             break;
           case 'end':
             setLocalStorageChatflow(chatflowid, chatId);
+            // Send complete message with metadata to InteractiveAvatar
+            const lastMessage = messages()[messages().length - 1];
+            sendToInteractiveAvatar(lastMessage.message, {
+              sourceDocuments: lastMessage.sourceDocuments,
+              usedTools: lastMessage.usedTools,
+              fileAnnotations: lastMessage.fileAnnotations,
+              agentReasoning: lastMessage.agentReasoning,
+              action: lastMessage.action,
+              artifacts: lastMessage.artifacts
+            });
             closeResponse();
             break;
         }
@@ -797,6 +911,16 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
         playReceiveSound();
 
+        // Send complete message to InteractiveAvatar
+        sendToInteractiveAvatar(text, {
+          sourceDocuments: data?.sourceDocuments,
+          usedTools: data?.usedTools,
+          fileAnnotations: data?.fileAnnotations,
+          agentReasoning: data?.agentReasoning,
+          action: data?.action,
+          artifacts: data?.artifacts
+        });
+
         setMessages((prevMessages) => {
           const allMessages = [...cloneDeep(prevMessages)];
           const newMessage = {
@@ -862,7 +986,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
     }
   };
 
-  const handleActionClick = async (label: string, action: IAction | undefined | null) => {
+  const handleActionClick = async (label: string, action: IAction | undefined | null): Promise<void> => {
     setUserInput(label);
     setMessages((data) => {
       const updated = data.map((item, i) => {
@@ -871,10 +995,9 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
         }
         return item;
       });
-      addChatMessage(updated);
-      return [...updated];
+      return updated;
     });
-    handleSubmit(label, action);
+    await handleSubmit(label, action);
   };
 
   const clearChat = () => {
@@ -903,9 +1026,13 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   onMount(() => {
     if (props.clearChatOnReload) {
       clearChat();
-      window.addEventListener('beforeunload', clearChat);
+      const cleanup = () => {
+        clearChat();
+        cleanupStreamingAvatar();
+      };
+      window.addEventListener('beforeunload', cleanup);
       return () => {
-        window.removeEventListener('beforeunload', clearChat);
+        window.removeEventListener('beforeunload', cleanup);
       };
     }
   });
@@ -944,6 +1071,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
   // eslint-disable-next-line solid/reactivity
   createEffect(async () => {
+    console.log('[Bot] Running initial effect');
     if (props.disclaimer) {
       if (getCookie('chatbotDisclaimer') == 'true') {
         setDisclaimerPopupOpen(false);
@@ -955,6 +1083,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
     }
 
     const chatMessage = getLocalStorageChatflow(props.chatflowid);
+    console.log('[Bot] Retrieved chat message from localStorage:', chatMessage);
     if (chatMessage && Object.keys(chatMessage).length) {
       if (chatMessage.chatId) setChatId(chatMessage.chatId);
       const savedLead = chatMessage.lead;
@@ -1361,13 +1490,31 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
     }
   };
 
+  // Add logging to component lifecycle
+  console.log('[Bot] Component created');
+
+  createEffect(() => {
+    console.log('[Bot] Component effect running, avatar stream:', !!avatarStream());
+  });
+
   return (
     <>
+      {console.log('[Bot] Rendering component')}
       <div
         ref={botContainer}
         class={'relative flex w-full h-full text-base overflow-hidden bg-cover bg-center flex-col items-center chatbot-container ' + props.class}
         onDragEnter={handleDrag}
       >
+        {/* Avatar Video Section */}
+        <Show when={avatarStream()}>
+          <div class="w-full h-[300px] bg-black">
+            <AvatarVideo 
+              class={isAvatarTalking() ? 'border-2 border-blue-500' : ''}
+              stream={avatarStream()}
+            />
+          </div>
+        </Show>
+
         {isDragActive() && (
           <div
             class="absolute top-0 left-0 bottom-0 right-0 w-full h-full z-50"

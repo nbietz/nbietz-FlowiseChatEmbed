@@ -1,5 +1,8 @@
+import { AvatarConfig } from '../../services/AvatarSessionManager';
+
 export type BubbleParams = {
   theme?: BubbleTheme;
+  avatar?: AvatarConfig;
 };
 
 export type BubbleTheme = {
@@ -51,31 +54,33 @@ export type FeedbackTheme = {
 };
 
 export type ChatWindowTheme = {
-  showTitle?: boolean;
-  showAgentMessages?: boolean; // parameter to show agent reasonings when using agentflows
-  title?: string;
-  titleAvatarSrc?: string;
-  titleTextColor?: string;
-  titleBackgroundColor?: string;
-  welcomeMessage?: string;
-  errorMessage?: string;
   backgroundColor?: string;
   backgroundImage?: string;
   height?: number;
   width?: number;
   fontSize?: number;
-  userMessage?: UserMessageTheme;
+  poweredByTextColor?: string;
   botMessage?: BotMessageTheme;
+  userMessage?: UserMessageTheme;
+  welcomeMessage?: string;
   textInput?: TextInputTheme;
   feedback?: FeedbackTheme;
+  title?: string;
+  titleAvatarSrc?: string;
+  titleBackgroundColor?: string;
+  titleTextColor?: string;
+  showTitle?: boolean;
+  showAgentMessages?: boolean;
   footer?: FooterTheme;
   sourceDocsTitle?: string;
-  poweredByTextColor?: string;
   starterPrompts?: string[];
   starterPromptFontSize?: number;
   clearChatOnReload?: boolean;
+  disclaimer?: DisclaimerPopUpTheme;
   dateTimeToggle?: DateTimeToggleTheme;
   renderHTML?: boolean;
+  avatar?: AvatarConfig;
+  badgeBackgroundColor?: string;
 };
 
 export type ButtonTheme = {

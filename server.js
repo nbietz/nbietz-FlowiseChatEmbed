@@ -18,6 +18,7 @@ const __dirname = path.dirname(__filename);
 
 const API_HOST = process.env.API_HOST;
 const FLOWISE_API_KEY = process.env.FLOWISE_API_KEY;
+const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY;
 
 if (!API_HOST) {
   console.error('API_HOST is not set in environment variables');
@@ -26,6 +27,11 @@ if (!API_HOST) {
 
 if (!FLOWISE_API_KEY) {
   console.error('FLOWISE_API_KEY is not set in environment variables');
+  process.exit(1);
+}
+
+if (!HEYGEN_API_KEY) {
+  console.error('HEYGEN_API_KEY is not set in environment variables');
   process.exit(1);
 }
 
@@ -172,7 +178,7 @@ const validateApiKey = (req, res, next) => {
     return next();
   }
 
-  if (req.path.includes('/get-upload-file')) {
+  if (req.path.includes('/get-upload-file') || req.path === '/api/v1/heygen/token') {
     return next();
   }
 
@@ -251,6 +257,7 @@ const proxyEndpoints = {
 };
 
 const handleProxy = async (req, res, targetPath) => {
+  console.log(`[Server] Proxying ${targetPath.method} request to ${targetPath.target}`);
   try {
     let identifier = req.query.chatflowId?.split('/')[0] || req.path.split('/').pop() || null;
 
@@ -299,8 +306,13 @@ const handleProxy = async (req, res, targetPath) => {
     });
 
     if (!response.ok) {
-      console.error(`Proxy error: ${response.status} ${response.statusText}`);
-      return res.status(response.status).json({ error: `Proxy error: ${response.statusText}` });
+      const errorText = await response.text();
+      console.error('[Server] Proxy error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      return res.status(response.status).send(errorText);
     }
 
     const contentType = response.headers.get('content-type');
@@ -324,8 +336,8 @@ const handleProxy = async (req, res, targetPath) => {
 
     return response.body.pipe(res);
   } catch (error) {
-    console.error('Proxy error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error(`[Server] Error in ${targetPath.method} ${targetPath.target}:`, error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -371,6 +383,50 @@ app.post('/api/v1/attachments/:identifier/:chatId', upload.array('files'), async
   } catch (error) {
     console.error('Attachment upload error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.post('/api/v1/heygen/token', async (req, res) => {
+  console.log('[Server] Received request for Heygen token');
+  console.log('[Server] Using Heygen API Key:', HEYGEN_API_KEY.substring(0, 10) + '...');
+  
+  try {
+    console.log('[Server] Making request to Heygen API https://api.heygen.com/v1/streaming.create_token');
+    const response = await fetch("https://api.heygen.com/v1/streaming.create_token", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': HEYGEN_API_KEY
+      }
+    });
+    console.log('[Server] Heygen API response status:', response.status);
+    console.log('[Server] Heygen API response headers:', response.headers.raw());
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[Server] Heygen API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      return res.status(response.status).send(errorText);
+    }
+
+    const jsonResponse = await response.json();
+
+    console.log('[Server] Full Heygen API JSON response:', JSON.stringify(jsonResponse, null, 2));
+    
+    if (jsonResponse.error) {
+      console.error('[Server] Heygen API returned error:', jsonResponse.error);
+      return res.status(400).json(jsonResponse);
+    }
+
+    const token = jsonResponse.data.token;
+    console.log('[Server] Successfully retrieved Heygen token:', token);
+    res.json({ token });
+  } catch (error) {
+    console.error('[Server] Error fetching Heygen token:', error);
+    res.status(500).send('Failed to fetch Heygen token');
   }
 });
 

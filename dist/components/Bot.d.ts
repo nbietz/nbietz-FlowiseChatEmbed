@@ -1,6 +1,8 @@
+import { JSX } from 'solid-js';
 import { FeedbackRatingType } from '@/queries/sendMessageQuery';
 import { BotMessageTheme, FooterTheme, TextInputTheme, UserMessageTheme, FeedbackTheme, DisclaimerPopUpTheme, DateTimeToggleTheme } from '@/features/bubble/types';
 import { FilePreview } from '@/components/inputs/textInput/components/FilePreview';
+import { AvatarConfig } from '../services/AvatarSessionManager';
 export type FileEvent<T = EventTarget> = {
     target: T;
 };
@@ -71,6 +73,7 @@ export type observersConfigType = Record<'observeUserInput' | 'observeLoading' |
 export type BotProps = {
     chatflowid: string;
     apiHost?: string;
+    avatar?: AvatarConfig;
     onRequest?: (request: RequestInit) => Promise<void>;
     chatflowConfig?: Record<string, unknown>;
     welcomeMessage?: string;
@@ -114,6 +117,6 @@ export type LeadsConfig = {
 };
 export declare const Bot: (botProps: BotProps & {
     class?: string;
-}) => import("solid-js").JSX.Element;
+}) => JSX.Element;
 export {};
 //# sourceMappingURL=Bot.d.ts.map
