@@ -24,7 +24,6 @@ declare class AvatarSessionManager {
     private static instance;
     private avatar;
     private apiHost;
-    private constructor();
     static getInstance(): AvatarSessionManager;
     private fetchAccessToken;
     initializeSession(config: AvatarSessionConfig): Promise<void>;

@@ -55,6 +55,7 @@ export type ChatWindowTheme = {
     botMessage?: BotMessageTheme;
     userMessage?: UserMessageTheme;
     welcomeMessage?: string;
+    errorMessage?: string;
     textInput?: TextInputTheme;
     feedback?: FeedbackTheme;
     title?: string;
