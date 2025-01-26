@@ -326,6 +326,33 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
     avatarManager.endSession();
   };
 
+  const handleInterruptAvatar = async () => {
+    try {
+      console.log('[Bot] Interrupting avatar speech');
+      await avatarManager.interrupt();
+    } catch (error) {
+      console.error('[Bot] Error interrupting avatar:', error);
+    }
+  };
+
+  const handleEndAvatarSession = async () => {
+    try {
+      console.log('[Bot] Ending avatar session');
+      await avatarManager.endSession();
+    } catch (error) {
+      console.error('[Bot] Error ending avatar session:', error);
+    }
+  };
+
+  const handleStartAvatarSession = async () => {
+    try {
+      console.log('[Bot] Starting new avatar session');
+      await initializeAvatar();
+    } catch (error) {
+      console.error('[Bot] Error starting avatar session:', error);
+    }
+  };
+
   // set a default value for showTitle if not set and merge with other props
   const props = mergeProps({ showTitle: true }, botProps);
   let chatContainer: HTMLDivElement | undefined;
@@ -649,6 +676,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
     const chatId = params.chatId;
     const input = params.question;
     params.streaming = true;
+
     fetchEventSource(`${props.apiHost}/api/v1/prediction/${chatflowid}`, {
       openWhenHidden: true,
       method: 'POST',
@@ -684,7 +712,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
           case 'token':
             updateLastMessage(payload.data);
             // Send each token to InteractiveAvatar
-            sendToInteractiveAvatar(payload.data);
+            // sendToInteractiveAvatar(payload.data);
             break;
           case 'sourceDocuments':
             updateLastMessageSourceDocuments(payload.data);
@@ -990,7 +1018,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
 
   const handleActionClick = async (label: string, action: IAction | undefined | null): Promise<void> => {
     setUserInput(label);
-    setMessages((data) => {
+    setMessages(data => {
       const updated = data.map((item, i) => {
         if (i === data.length - 1) {
           return { ...item, action: null };
@@ -1504,13 +1532,24 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
       {console.log('[Bot] Rendering component')}
       <div
         ref={botContainer}
-        class={'relative flex w-full h-full text-base overflow-hidden bg-cover bg-center flex-col items-center chatbot-container ' + props.class}
+        class={'relative flex w-full h-full text-base overflow-hidden flex-col items-center chatbot-container ' + props.class}
         onDragEnter={handleDrag}
+        style={{
+          'min-height': '100%',
+          height: '100%',
+          'padding-top': props.avatar && avatarStream() ? '400px' : '0',
+          'background-color': 'transparent',
+          border: 'none'
+        }}
+        part="bot-content"
       >
-        {/* Avatar Video Section */}
-        <Show when={avatarStream()}>
-          <div class="w-full h-[300px] bg-black">
-            <AvatarVideo class={isAvatarTalking() ? 'border-2 border-blue-500' : ''} stream={avatarStream()} />
+        {/* Avatar Video Section - Fixed positioned */}
+        <Show when={props.avatar && avatarStream()}>
+          <div class="fixed top-0 left-0 w-full z-10" style={{ 'background-color': 'transparent' }}>
+            <AvatarVideo 
+              class={isAvatarTalking() ? '' : ''} 
+              stream={avatarStream()} 
+            />
           </div>
         </Show>
 
@@ -1543,14 +1582,16 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
           </div>
         )}
 
+        {/* Title Bar */}
         {props.showTitle ? (
           <div
-            class="flex flex-row items-center w-full h-[50px] absolute top-0 left-0 z-10"
+            class="flex flex-row items-center w-full h-[50px] z-20 bg-opacity-90"
             style={{
               background: props.titleBackgroundColor || props.bubbleBackgroundColor || defaultTitleBackgroundColor,
               color: props.titleTextColor || props.bubbleTextColor || defaultBackgroundColor,
               'border-top-left-radius': props.isFullPage ? '0px' : '6px',
               'border-top-right-radius': props.isFullPage ? '0px' : '6px',
+              border: 'none'
             }}
           >
             <Show when={props.titleAvatarSrc}>
@@ -1563,6 +1604,36 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
               <span class="px-3 whitespace-pre-wrap font-semibold max-w-full">{props.title}</span>
             </Show>
             <div style={{ flex: 1 }} />
+            {/* Avatar Control Buttons */}
+            <Show when={props.avatar}>
+              <div class="flex items-center gap-2 mx-2">
+                <Show when={avatarStream()}>
+                  <button
+                    class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
+                    title="Stop current speech"
+                    onClick={handleInterruptAvatar}
+                  >
+                    Interrupt
+                  </button>
+                  <button
+                    class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
+                    title="End avatar session"
+                    onClick={handleEndAvatarSession}
+                  >
+                    End
+                  </button>
+                </Show>
+                <Show when={!avatarStream()}>
+                  <button
+                    class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
+                    title="Start avatar session"
+                    onClick={handleStartAvatarSession}
+                  >
+                    Start Interactive Avatar
+                  </button>
+                </Show>
+              </div>
+            </Show>
             <DeleteButton
               sendButtonColor={props.bubbleTextColor}
               type="button"
@@ -1572,12 +1643,46 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
             >
               <span style={{ 'font-family': 'Poppins, sans-serif' }}>Clear</span>
             </DeleteButton>
+            {/* Close Button */}
+            <Show when={props.closeBot}>
+              <button
+                class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full mx-2"
+                onClick={props.closeBot}
+                title="Close chat"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </Show>
           </div>
-        ) : null}
-        <div class="flex flex-col w-full h-full justify-start z-0">
+        ) : (
+          // Add close button to title bar even when showTitle is false
+          <Show when={props.closeBot}>
+            <div class="flex justify-end w-full z-20">
+              <button
+                class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full m-2"
+                onClick={props.closeBot}
+                title="Close chat"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </Show>
+        )}
+
+        {/* Rest of the chat container */}
+        <div class="flex flex-col w-full h-full justify-between overflow-hidden bg-opacity-80 backdrop-blur-sm" style={{
+          'background-color': 'rgba(15, 23, 42, 0.8)', // Dark semi-transparent background
+        }}>
+          {/* Chat messages area - Allow this to scroll */}
           <div
             ref={chatContainer}
-            class="overflow-y-scroll flex flex-col flex-grow min-w-full w-full px-3 pt-[70px] relative scrollable-container chatbot-chat-view scroll-smooth"
+            class="overflow-y-auto flex-1 flex flex-col min-w-full w-full px-3 relative scrollable-container chatbot-chat-view scroll-smooth"
           >
             <For each={[...messages()]}>
               {(message, index) => {

@@ -28,6 +28,7 @@ declare class AvatarSessionManager {
     private fetchAccessToken;
     initializeSession(config: AvatarSessionConfig): Promise<void>;
     speak(text: string): Promise<void>;
+    interrupt(): Promise<void>;
     endSession(): Promise<void>;
     isSessionActive(): boolean;
 }

@@ -159,10 +159,24 @@ class AvatarSessionManager {
       await this.avatar.speak({
         text,
         taskMode: TaskMode.SYNC,
-        task_type: TaskType.TALK,
+        task_type: TaskType.REPEAT,
       });
     } catch (error) {
       console.error('[AvatarSessionManager] Failed to speak:', error);
+      throw error;
+    }
+  }
+
+  async interrupt(): Promise<void> {
+    if (!this.avatar) {
+      throw new Error('Avatar session not initialized');
+    }
+
+    try {
+      console.log('[AvatarSessionManager] Interrupting avatar speech');
+      await this.avatar.interrupt();
+    } catch (error) {
+      console.error('[AvatarSessionManager] Failed to interrupt:', error);
       throw error;
     }
   }

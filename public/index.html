@@ -14,9 +14,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
     <title>Flowise Chatbot Embed Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0f172a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Textured background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            z-index: -1;
+            background: 
+                linear-gradient(45deg, transparent 48%, #2563eb 49%, #2563eb 51%, transparent 52%) 0 0/60px 60px,
+                linear-gradient(-45deg, transparent 48%, #7c3aed 49%, #7c3aed 51%, transparent 52%) 0 0/60px 60px;
+            animation: patternMove 20s linear infinite;
+        }
+
+        @keyframes patternMove {
+            from { background-position: 0 0; }
+            to { background-position: 60px 60px; }
+        }
+
+        /* Aura effect */
+        body::after {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+            animation: auraFloat 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes auraFloat {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            100% {
+                transform: rotate(10deg) scale(1.1);
+            }
+        }
+
+        .content {
+            text-align: center;
+            z-index: 1;
+            padding: 2rem;
+            max-width: 600px;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #3B81F6, #8B5CF6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
 
 <body>
+    <div class="content">
+        <h1>Interactive AI Assistant</h1>
+        <p>Experience natural conversations with our AI-powered assistant. Click the chat button to get started.</p>
+    </div>
     <div id="root"></div>
     <script type="module">
         import Chatbot from './web.js'
@@ -49,27 +146,27 @@
                         language: ""                            // Optional: default 'en'
                     },
                     welcomeMessage: "Hello! This is your AI assistant.",
-                    backgroundColor: "#ffffff",
+                    backgroundColor: "transparent",
                     height: 700,
                     width: 400,
                     fontSize: 16,
-                    poweredByTextColor: "#303235",
+                    poweredByTextColor: "#94a3b8",
                     botMessage: {
-                        backgroundColor: "#f7f8ff",
-                        textColor: "#303235",
+                        backgroundColor: "rgba(51, 65, 85, 0.8)",
+                        textColor: "#e2e8f0",
                         showAvatar: true,
                         avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/parroticon.png",
                     },
                     userMessage: {
-                        backgroundColor: "#3B81F6",
+                        backgroundColor: "rgba(59, 130, 246, 0.8)",
                         textColor: "#ffffff",
                         showAvatar: true,
                         avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png",
                     },
                     textInput: {
                         placeholder: "Type your message here...",
-                        backgroundColor: "#ffffff",
-                        textColor: "#303235",
+                        backgroundColor: "rgba(30, 41, 59, 0.8)",
+                        textColor: "#e2e8f0",
                         sendButtonColor: "#3B81F6",
                     }
                 }

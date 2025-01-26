@@ -5,6 +5,7 @@ import { BubbleParams } from '../types';
 import { Bot, BotProps } from '../../../components/Bot';
 import Tooltip from './Tooltip';
 import { getBubbleButtonSize } from '@/utils';
+import AvatarSessionManager from '@/services/AvatarSessionManager';
 
 const defaultButtonColor = '#3B81F6';
 const defaultIconColor = 'white';
@@ -39,6 +40,14 @@ export const Bubble = (props: BubbleProps) => {
 
   const closeBot = () => {
     console.log('[Bubble] Closing bot');
+    // End avatar session when chat window is closed
+    const avatarManager = AvatarSessionManager.getInstance();
+    if (avatarManager.isSessionActive()) {
+      console.log('[Bubble] Ending active avatar session');
+      avatarManager.endSession().catch((error: Error) => {
+        console.error('[Bubble] Error ending avatar session on close:', error);
+      });
+    }
     setIsBotOpened(false);
   };
 
@@ -99,9 +108,11 @@ export const Bubble = (props: BubbleProps) => {
       <div
         part="bot"
         style={{
-          height: bubbleProps.theme?.chatWindow?.height ? `${bubbleProps.theme?.chatWindow?.height.toString()}px` : 'calc(100% - 150px)',
+          height: bubbleProps.theme?.chatWindow?.height 
+            ? `${bubbleProps.theme?.chatWindow?.height + (bubbleProps.theme?.chatWindow?.avatar && isBotStarted() ? 400 : 0)}px` 
+            : 'calc(100% - 150px)',
           width: bubbleProps.theme?.chatWindow?.width ? `${bubbleProps.theme?.chatWindow?.width.toString()}px` : undefined,
-          transition: 'transform 200ms cubic-bezier(0, 1.2, 1, 1), opacity 150ms ease-out',
+          transition: 'transform 200ms cubic-bezier(0, 1.2, 1, 1), opacity 150ms ease-out, height 200ms ease-out',
           'transform-origin': 'bottom right',
           transform: isBotOpened() ? 'scale3d(1, 1, 1)' : 'scale3d(0, 0, 1)',
           'box-shadow': 'rgb(0 0 0 / 16%) 0px 5px 40px',
@@ -113,9 +124,12 @@ export const Bubble = (props: BubbleProps) => {
           'z-index': 42424242,
           bottom: `${Math.min(buttonPosition().bottom + buttonSize + 10, window.innerHeight - chatWindowBottom)}px`,
           right: `${Math.max(0, Math.min(buttonPosition().right, window.innerWidth - (bubbleProps.theme?.chatWindow?.width ?? 410) - 10))}px`,
+          'max-height': bubbleProps.theme?.chatWindow?.avatar && isBotStarted() ? 'calc(100vh - 100px)' : '704px',
+          display: 'flex',
+          'flex-direction': 'column'
         }}
         class={
-          `fixed sm:right-5 rounded-lg w-full sm:w-[400px] max-h-[704px]` +
+          `fixed sm:right-5 rounded-lg w-full sm:w-[400px]` +
           (isBotOpened() ? ' opacity-1' : ' opacity-0 pointer-events-none') +
           ` bottom-${chatWindowBottom}px`
         }
@@ -123,49 +137,36 @@ export const Bubble = (props: BubbleProps) => {
         <Show when={isBotStarted()}>
           <div class="relative h-full">
             <Show when={isBotOpened()}>
-              {/* Cross button For only mobile screen use this <Show when={isBotOpened() && window.innerWidth <= 640}>  */}
-              <button
-                onClick={closeBot}
-                class="py-2 pr-3 absolute top-0 right-[-8px] m-[6px] bg-transparent text-white rounded-full z-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:brightness-100 transition-all filter hover:brightness-90 active:brightness-75"
-                title="Close Chat"
-              >
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                  <path
-                    fill={bubbleProps.theme?.button?.iconColor ?? defaultIconColor}
-                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
-                  />
-                </svg>
-              </button>
+              <Bot
+                class="rounded-lg border-[1px] border-[#eeeeee] shadow-md"
+                chatflowid={props.chatflowid}
+                apiHost={props.apiHost}
+                avatar={props.theme?.chatWindow?.avatar}
+                chatflowConfig={props.chatflowConfig}
+                welcomeMessage={props.theme?.chatWindow?.welcomeMessage}
+                botMessage={props.theme?.chatWindow?.botMessage}
+                userMessage={props.theme?.chatWindow?.userMessage}
+                textInput={props.theme?.chatWindow?.textInput}
+                poweredByTextColor={props.theme?.chatWindow?.poweredByTextColor}
+                badgeBackgroundColor={props.theme?.chatWindow?.badgeBackgroundColor}
+                bubbleBackgroundColor={props.theme?.button?.backgroundColor}
+                bubbleTextColor={props.theme?.button?.iconColor}
+                title={props.theme?.chatWindow?.title}
+                titleAvatarSrc={props.theme?.chatWindow?.titleAvatarSrc}
+                fontSize={props.theme?.chatWindow?.fontSize}
+                showTitle={props.theme?.chatWindow?.showTitle}
+                showAgentMessages={props.theme?.chatWindow?.showAgentMessages}
+                sourceDocsTitle={props.theme?.chatWindow?.sourceDocsTitle}
+                feedback={props.theme?.chatWindow?.feedback}
+                starterPrompts={props.theme?.chatWindow?.starterPrompts}
+                starterPromptFontSize={props.theme?.chatWindow?.starterPromptFontSize}
+                clearChatOnReload={props.theme?.chatWindow?.clearChatOnReload}
+                disclaimer={props.theme?.chatWindow?.disclaimer}
+                dateTimeToggle={props.theme?.chatWindow?.dateTimeToggle}
+                renderHTML={props.theme?.chatWindow?.renderHTML}
+                closeBot={closeBot}
+              />
             </Show>
-            <Bot
-              class="rounded-lg border-[1px] border-[#eeeeee] shadow-md"
-              chatflowid={props.chatflowid}
-              apiHost={props.apiHost}
-              avatar={props.theme?.chatWindow?.avatar}
-              chatflowConfig={props.chatflowConfig}
-              welcomeMessage={props.theme?.chatWindow?.welcomeMessage}
-              botMessage={props.theme?.chatWindow?.botMessage}
-              userMessage={props.theme?.chatWindow?.userMessage}
-              textInput={props.theme?.chatWindow?.textInput}
-              poweredByTextColor={props.theme?.chatWindow?.poweredByTextColor}
-              badgeBackgroundColor={props.theme?.chatWindow?.badgeBackgroundColor}
-              bubbleBackgroundColor={props.theme?.button?.backgroundColor}
-              bubbleTextColor={props.theme?.button?.iconColor}
-              title={props.theme?.chatWindow?.title}
-              titleAvatarSrc={props.theme?.chatWindow?.titleAvatarSrc}
-              fontSize={props.theme?.chatWindow?.fontSize}
-              showTitle={props.theme?.chatWindow?.showTitle}
-              showAgentMessages={props.theme?.chatWindow?.showAgentMessages}
-              sourceDocsTitle={props.theme?.chatWindow?.sourceDocsTitle}
-              feedback={props.theme?.chatWindow?.feedback}
-              starterPrompts={props.theme?.chatWindow?.starterPrompts}
-              starterPromptFontSize={props.theme?.chatWindow?.starterPromptFontSize}
-              clearChatOnReload={props.theme?.chatWindow?.clearChatOnReload}
-              disclaimer={props.theme?.chatWindow?.disclaimer}
-              dateTimeToggle={props.theme?.chatWindow?.dateTimeToggle}
-              renderHTML={props.theme?.chatWindow?.renderHTML}
-              closeBot={() => setIsBotOpened(false)}
-            />
           </div>
         </Show>
       </div>
