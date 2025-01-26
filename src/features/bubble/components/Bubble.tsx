@@ -108,8 +108,8 @@ export const Bubble = (props: BubbleProps) => {
       <div
         part="bot"
         style={{
-          height: bubbleProps.theme?.chatWindow?.height 
-            ? `${bubbleProps.theme?.chatWindow?.height + (bubbleProps.theme?.chatWindow?.avatar && isBotStarted() ? 400 : 0)}px` 
+          height: bubbleProps.theme?.chatWindow?.height
+            ? `${bubbleProps.theme?.chatWindow?.height + (bubbleProps.theme?.chatWindow?.avatar && isBotStarted() ? 400 : 0)}px`
             : 'calc(100% - 150px)',
           width: bubbleProps.theme?.chatWindow?.width ? `${bubbleProps.theme?.chatWindow?.width.toString()}px` : undefined,
           transition: 'transform 200ms cubic-bezier(0, 1.2, 1, 1), opacity 150ms ease-out, height 200ms ease-out',
@@ -126,7 +126,7 @@ export const Bubble = (props: BubbleProps) => {
           right: `${Math.max(0, Math.min(buttonPosition().right, window.innerWidth - (bubbleProps.theme?.chatWindow?.width ?? 410) - 10))}px`,
           'max-height': bubbleProps.theme?.chatWindow?.avatar && isBotStarted() ? 'calc(100vh - 100px)' : '704px',
           display: 'flex',
-          'flex-direction': 'column'
+          'flex-direction': 'column',
         }}
         class={
           `fixed sm:right-5 rounded-lg w-full sm:w-[400px]` +

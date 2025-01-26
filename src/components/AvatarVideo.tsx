@@ -84,27 +84,27 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
   const createShader = (gl: WebGLRenderingContext, type: number, source: string) => {
     const shader = gl.createShader(type);
     if (!shader) return null;
-    
+
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
-    
+
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       console.error('Shader compile error:', gl.getShaderInfoLog(shader));
       gl.deleteShader(shader);
       return null;
     }
-    
+
     return shader;
   };
 
   // Function to initialize WebGL
   const initWebGL = () => {
     if (!canvasRef) return;
-    
+
     // Enable alpha channel handling
-    glRef = canvasRef.getContext('webgl', { 
+    glRef = canvasRef.getContext('webgl', {
       premultipliedAlpha: false,
-      alpha: true
+      alpha: true,
     });
     if (!glRef) {
       console.error('WebGL not supported');
@@ -120,44 +120,34 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
     // Create shaders
     const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-    
+
     if (!vertexShader || !fragmentShader) return;
 
     // Create program
     const program = gl.createProgram();
     if (!program) return;
-    
+
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
-    
+
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       console.error('Program link error:', gl.getProgramInfoLog(program));
       return;
     }
-    
+
     gl.useProgram(program);
 
     // Set up buffers
-    const positions = new Float32Array([
-      -1, -1,
-       1, -1,
-      -1,  1,
-       1,  1,
-    ]);
-    
-    const texCoords = new Float32Array([
-      0, 1,
-      1, 1,
-      0, 0,
-      1, 0,
-    ]);
+    const positions = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+
+    const texCoords = new Float32Array([0, 1, 1, 1, 0, 0, 1, 0]);
 
     // Position buffer
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-    
+
     const positionLocation = gl.getAttribLocation(program, 'a_position');
     gl.enableVertexAttribArray(positionLocation);
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
@@ -166,7 +156,7 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
     const texCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
-    
+
     const texCoordLocation = gl.getAttribLocation(program, 'a_texCoord');
     gl.enableVertexAttribArray(texCoordLocation);
     gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
@@ -199,7 +189,7 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
     // Clear with zero alpha
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
-    
+
     // Enable blending for this frame
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -216,15 +206,15 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
   // Function to extract MediaStream from prop
   const getMediaStream = (streamProp: MediaStream | CustomEvent | null | undefined): MediaStream | null => {
     if (!streamProp) return null;
-    
+
     if (streamProp instanceof MediaStream) {
       return streamProp;
     }
-    
+
     if (streamProp instanceof CustomEvent && streamProp.detail instanceof MediaStream) {
       return streamProp.detail;
     }
-    
+
     return null;
   };
 
@@ -233,7 +223,7 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
     console.log('[AvatarVideo] Handling stream update:', {
       hasVideoRef: !!videoRef,
       hasStream: !!props.stream,
-      streamType: props.stream ? props.stream.constructor.name : 'undefined'
+      streamType: props.stream ? props.stream.constructor.name : 'undefined',
     });
 
     if (!videoRef) {
@@ -242,7 +232,7 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
     }
 
     const mediaStream = getMediaStream(props.stream);
-    
+
     if (!mediaStream) {
       console.log('[AvatarVideo] No valid MediaStream available');
       return;
@@ -254,28 +244,28 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
       console.log('[AvatarVideo] Stream details:', {
         active: mediaStream.active,
         id: mediaStream.id,
-        audioTracks: audioTracks.map(track => ({
+        audioTracks: audioTracks.map((track) => ({
           kind: track.kind,
           enabled: track.enabled,
           muted: track.muted,
           readyState: track.readyState,
           label: track.label,
-          id: track.id
+          id: track.id,
         })),
-        videoTracks: mediaStream.getVideoTracks().map(track => ({
+        videoTracks: mediaStream.getVideoTracks().map((track) => ({
           kind: track.kind,
           enabled: track.enabled,
           muted: track.muted,
-          readyState: track.readyState
-        }))
+          readyState: track.readyState,
+        })),
       });
 
       // Assign stream to video element
       videoRef.srcObject = mediaStream;
       console.log('[AvatarVideo] Successfully set stream to video element');
-      
+
       // Set audio track enabled
-      audioTracks.forEach(track => {
+      audioTracks.forEach((track) => {
         track.enabled = true;
         console.log('[AvatarVideo] Enabled audio track:', track.label);
       });
@@ -287,7 +277,7 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
   onMount(() => {
     console.log('[AvatarVideo] Component mounted');
     handleStreamUpdate();
-    
+
     if (videoRef) {
       videoRef.addEventListener('loadedmetadata', () => {
         console.log('[AvatarVideo] Video metadata loaded, attempting playback');
@@ -316,12 +306,12 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
   onCleanup(() => {
     console.log('[AvatarVideo] Component cleaning up');
     cancelAnimationFrame(animationFrameId);
-    
+
     if (videoRef?.srcObject) {
       try {
         const stream = videoRef.srcObject as MediaStream;
         if (stream instanceof MediaStream) {
-          stream.getTracks().forEach(track => {
+          stream.getTracks().forEach((track) => {
             console.log('[AvatarVideo] Stopping track:', track.kind);
             track.stop();
           });
@@ -334,24 +324,22 @@ export const AvatarVideo = (props: AvatarVideoProps) => {
   });
 
   return (
-    <div class="w-full bg-transparent" style={{ 
-      height: '400px', 
-      'min-height': '400px',
-      'background-color': 'transparent'
-    }}>
-      <video
-        ref={videoRef}
-        class="hidden"
-        autoplay
-        playsinline
-      />
+    <div
+      class="w-full bg-transparent"
+      style={{
+        height: '400px',
+        'min-height': '400px',
+        'background-color': 'transparent',
+      }}
+    >
+      <video ref={videoRef} class="hidden" autoplay playsinline />
       <canvas
         ref={canvasRef}
         class={`w-full h-full object-contain ${props.class || ''}`}
         style={{
           width: props.width || '100%',
           height: props.height || '100%',
-          'background-color': 'transparent'
+          'background-color': 'transparent',
         }}
       />
     </div>

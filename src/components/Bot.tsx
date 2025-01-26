@@ -1018,7 +1018,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
 
   const handleActionClick = async (label: string, action: IAction | undefined | null): Promise<void> => {
     setUserInput(label);
-    setMessages(data => {
+    setMessages((data) => {
       const updated = data.map((item, i) => {
         if (i === data.length - 1) {
           return { ...item, action: null };
@@ -1539,17 +1539,14 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
           height: '100%',
           'padding-top': props.avatar && avatarStream() ? '400px' : '0',
           'background-color': 'transparent',
-          border: 'none'
+          border: 'none',
         }}
         part="bot-content"
       >
         {/* Avatar Video Section - Fixed positioned */}
         <Show when={props.avatar && avatarStream()}>
           <div class="fixed top-0 left-0 w-full z-10" style={{ 'background-color': 'transparent' }}>
-            <AvatarVideo 
-              class={isAvatarTalking() ? '' : ''} 
-              stream={avatarStream()} 
-            />
+            <AvatarVideo class={isAvatarTalking() ? '' : ''} stream={avatarStream()} />
           </div>
         </Show>
 
@@ -1591,7 +1588,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
               color: props.titleTextColor || props.bubbleTextColor || defaultBackgroundColor,
               'border-top-left-radius': props.isFullPage ? '0px' : '6px',
               'border-top-right-radius': props.isFullPage ? '0px' : '6px',
-              border: 'none'
+              border: 'none',
             }}
           >
             <Show when={props.titleAvatarSrc}>
@@ -1645,14 +1642,19 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
             </DeleteButton>
             {/* Close Button */}
             <Show when={props.closeBot}>
-              <button
-                class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full mx-2"
-                onClick={props.closeBot}
-                title="Close chat"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
+              <button class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full mx-2" onClick={props.closeBot} title="Close chat">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
             </Show>
@@ -1661,14 +1663,19 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
           // Add close button to title bar even when showTitle is false
           <Show when={props.closeBot}>
             <div class="flex justify-end w-full z-20">
-              <button
-                class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full m-2"
-                onClick={props.closeBot}
-                title="Close chat"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
+              <button class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full m-2" onClick={props.closeBot} title="Close chat">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
             </div>
@@ -1676,9 +1683,12 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
         )}
 
         {/* Rest of the chat container */}
-        <div class="flex flex-col w-full h-full justify-between overflow-hidden bg-opacity-80 backdrop-blur-sm" style={{
-          'background-color': 'rgba(15, 23, 42, 0.8)', // Dark semi-transparent background
-        }}>
+        <div
+          class="flex flex-col w-full h-full justify-between overflow-hidden bg-opacity-80 backdrop-blur-sm"
+          style={{
+            'background-color': 'rgba(15, 23, 42, 0.8)', // Dark semi-transparent background
+          }}
+        >
           {/* Chat messages area - Allow this to scroll */}
           <div
             ref={chatContainer}
