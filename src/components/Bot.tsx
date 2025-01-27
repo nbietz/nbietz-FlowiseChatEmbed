@@ -1037,6 +1037,8 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
         (props.chatflowConfig?.vars as any)?.customerId ? `${(props.chatflowConfig?.vars as any).customerId.toString()}+${uuidv4()}` : uuidv4(),
       );
       setUploadedFiles([]);
+      setUserInput('');
+      setLoading(false);
       const messages: MessageType[] = [
         {
           message: props.welcomeMessage ?? defaultWelcomeMessage,
@@ -1047,8 +1049,15 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
         messages.push({ message: '', type: 'leadCaptureMessage' });
       }
       setMessages(messages);
+
+      // Reset follow-up prompts
+      setFollowUpPrompts([]);
+      setFollowUpPromptsStatus(false);
+
+      // If there are starter prompts, they will be shown automatically
+      // due to the messages().length === 1 condition in the render
     } catch (error: any) {
-      const errorData = error.response.data || `${error.response.status}: ${error.response.statusText}`;
+      const errorData = error.response?.data || `${error.response?.status}: ${error.response?.statusText}`;
       console.error(`error: ${errorData}`);
     }
   };
@@ -1626,7 +1635,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
                     title="Start avatar session"
                     onClick={handleStartAvatarSession}
                   >
-                    Start Interactive Avatar
+                    Start Avatar
                   </button>
                 </Show>
               </div>
