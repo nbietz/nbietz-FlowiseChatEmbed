@@ -54,31 +54,6 @@
             to { background-position: 60px 60px; }
         }
 
-        /* Aura effect */
-        body::after {
-            content: '';
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.2) 0%, transparent 40%),
-                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 40%);
-            pointer-events: none;
-            z-index: -1;
-            animation: auraFloat 10s ease-in-out infinite alternate;
-        }
-
-        @keyframes auraFloat {
-            0% {
-                transform: rotate(0deg) scale(1);
-            }
-            100% {
-                transform: rotate(10deg) scale(1.1);
-            }
-        }
-
         .content {
             text-align: center;
             z-index: 1;
@@ -140,11 +115,14 @@
                 },
                 chatWindow: {
                     avatar: {
-                        avatarId: "",                           // Optional: Your avatar ID
+                        avatarId: "Kayla-incasualsuit-20220818",                           // Optional: Your avatar ID
                         voiceId: "",                            // Optional: Heygen voice ID
                         quality: "",                            // Optional: Low, Medium, High
                         language: ""                            // Optional: default 'en'
                     },
+                    starterPrompts: ['What is Flowise?', 'How can I get started with my own chatbot?'],
+                    starterPromptFontSize: 15,
+                    clearChatOnReload: false,
                     welcomeMessage: "Hello! This is your AI assistant.",
                     backgroundColor: "transparent",
                     height: 700,
@@ -168,7 +146,20 @@
                         backgroundColor: "rgba(30, 41, 59, 0.8)",
                         textColor: "#e2e8f0",
                         sendButtonColor: "#3B81F6",
+                    },
+                    feedback: {
+                        color: "#3B81F6"
                     }
+                },
+                footer: {
+                    textColor: "#94a3b8",
+                    text: "Powered by",
+                    company: "FLowiseAI",
+                    companyLink: "https://flowiseai.com/"
+                },
+                disclaimer: {
+                    title: 'Disclaimer',
+                    message: 'By using this chatbot, you agree to the <a target="_blank" href="https://flowiseai.com/terms">Terms & Condition</a>',
                 }
             }
         };
