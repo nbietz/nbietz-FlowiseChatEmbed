@@ -1593,7 +1593,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
           <div
             class="flex flex-row items-center w-full h-[50px] z-20 backdrop-blur-sm"
             style={{
-              'background-color': 'rgba(15, 23, 42, 0.8)', // Dark semi-transparent background
+              background: props.titleBackgroundColor || props.bubbleBackgroundColor || defaultTitleBackgroundColor,
               color: props.titleTextColor || props.bubbleTextColor || defaultBackgroundColor,
               'border-top-left-radius': props.isFullPage ? '0px' : '6px',
               'border-top-right-radius': props.isFullPage ? '0px' : '6px',
