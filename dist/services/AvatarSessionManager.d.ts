@@ -24,7 +24,11 @@ declare class AvatarSessionManager {
     private static instance;
     private avatar;
     private apiHost;
+    private lastConfig;
+    private streamReadyCallbacks;
     static getInstance(): AvatarSessionManager;
+    onStreamReady(callback: (stream: MediaStream) => void): void;
+    clearStreamReadyCallbacks(): void;
     private fetchAccessToken;
     initializeSession(config: AvatarSessionConfig): Promise<void>;
     speak(text: string): Promise<void>;

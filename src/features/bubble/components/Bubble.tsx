@@ -18,18 +18,71 @@ export const Bubble = (props: BubbleProps) => {
 
   const [isBotOpened, setIsBotOpened] = createSignal(false);
   const [isBotStarted, setIsBotStarted] = createSignal(false);
+  const [hasSpokenWelcome, setHasSpokenWelcome] = createSignal(false);
   const [buttonPosition, setButtonPosition] = createSignal({
     bottom: bubbleProps.theme?.button?.bottom ?? 20,
     right: bubbleProps.theme?.button?.right ?? 20,
   });
+  const [isAvatarReady, setIsAvatarReady] = createSignal(false);
 
   // Log avatar configuration for debugging
   createEffect(() => {
     console.log('[Bubble] Avatar configuration:', props.avatar);
   });
 
+  // Create an effect to monitor avatar readiness and speak welcome message
+  createEffect(() => {
+    console.log('[Bubble] Checking conditions for welcome message:', {
+      isBotOpened: isBotOpened(),
+      isAvatarReady: isAvatarReady(),
+      hasSpokenWelcome: hasSpokenWelcome()
+    });
+    
+    const avatarManager = AvatarSessionManager.getInstance();
+    if (isBotOpened() && isAvatarReady() && !hasSpokenWelcome()) {
+      console.log('[Bubble] Avatar is ready and bot is opened, attempting welcome message');
+      speakWelcomeMessage();
+    }
+  });
+
+  const speakWelcomeMessage = async () => {
+    const welcomeMessage = props.theme?.chatWindow?.welcomeMessage;
+    console.log('[Bubble] Checking welcome message conditions:', {
+      hasSpokenWelcome: hasSpokenWelcome(),
+      welcomeMessage,
+      themeConfig: props.theme?.chatWindow,
+      isAvatarReady: isAvatarReady()
+    });
+    
+    if (hasSpokenWelcome()) {
+      console.log('[Bubble] Welcome message already spoken, skipping');
+      return;
+    }
+    
+    if (!welcomeMessage) {
+      console.log('[Bubble] No welcome message configured in theme, skipping');
+      return;
+    }
+    
+    const avatarManager = AvatarSessionManager.getInstance();
+    console.log('[Bubble] Avatar session active:', avatarManager.isSessionActive());
+    
+    if (avatarManager.isSessionActive() && isAvatarReady()) {
+      try {
+        console.log('[Bubble] Attempting to speak welcome message:', welcomeMessage);
+        await avatarManager.speak(welcomeMessage);
+        console.log('[Bubble] Successfully spoke welcome message');
+        setHasSpokenWelcome(true);
+      } catch (error) {
+        console.error('[Bubble] Error speaking welcome message:', error);
+      }
+    } else {
+      console.log('[Bubble] Avatar not ready or session not active, cannot speak welcome message');
+    }
+  };
+
   const openBot = () => {
-    console.log('[Bubble] Opening bot');
+    console.log('[Bubble] Opening bot with theme config:', props.theme?.chatWindow);
     setIsBotStarted(true);
     // Use a small delay to ensure the Bot component is mounted before opening
     requestAnimationFrame(() => {
@@ -59,6 +112,24 @@ export const Bubble = (props: BubbleProps) => {
   onCleanup(() => {
     console.log('[Bubble] Cleaning up');
     setIsBotStarted(false);
+  });
+
+  // Add an effect to listen for avatar stream ready event
+  createEffect(() => {
+    if (!isBotStarted()) return;
+    
+    console.log('[Bubble] Setting up stream ready listener, bot started:', isBotStarted());
+    const avatarManager = AvatarSessionManager.getInstance();
+    
+    // Clear any existing callbacks when the effect re-runs
+    avatarManager.clearStreamReadyCallbacks();
+    
+    console.log('[Bubble] Registering stream ready callback');
+    avatarManager.onStreamReady((stream) => {
+      console.log('[Bubble] Stream ready callback triggered');
+      setIsAvatarReady(true);
+      console.log('[Bubble] isAvatarReady set to:', isAvatarReady());
+    });
   });
 
   const buttonSize = getBubbleButtonSize(props.theme?.button?.size); // Default to 48px if size is not provided

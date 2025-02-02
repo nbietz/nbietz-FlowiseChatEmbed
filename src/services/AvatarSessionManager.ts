@@ -27,12 +27,24 @@ class AvatarSessionManager {
   private static instance: AvatarSessionManager;
   private avatar: StreamingAvatar | null = null;
   private apiHost = '';
+  private lastConfig: AvatarSessionConfig | null = null;
+  private streamReadyCallbacks: Array<(stream: MediaStream) => void> = [];
 
   static getInstance(): AvatarSessionManager {
     if (!AvatarSessionManager.instance) {
       AvatarSessionManager.instance = new AvatarSessionManager();
     }
     return AvatarSessionManager.instance;
+  }
+
+  onStreamReady(callback: (stream: MediaStream) => void): void {
+    console.log('[AvatarSession] Registering stream ready callback');
+    this.streamReadyCallbacks.push(callback);
+  }
+
+  clearStreamReadyCallbacks(): void {
+    console.log('[AvatarSession] Clearing stream ready callbacks');
+    this.streamReadyCallbacks = [];
   }
 
   private async fetchAccessToken(): Promise<string> {
@@ -92,16 +104,35 @@ class AvatarSessionManager {
 
     try {
       this.apiHost = config.apiHost;
+      this.lastConfig = config;
       const newToken = await this.fetchAccessToken();
       console.log('[AvatarSession] Initializing StreamingAvatar with token length:', newToken.length);
 
       this.avatar = new StreamingAvatar({ token: newToken });
-
       console.log('[AvatarSession] StreamingAvatar instance created');
 
+      // Register stream ready callback before attaching event listeners
+      if (this.streamReadyCallbacks.length === 0) {
+        console.log('[AvatarSession] No stream ready callbacks registered yet');
+      } else {
+        console.log(`[AvatarSession] ${this.streamReadyCallbacks.length} callbacks already registered`);
+      }
+
       this.avatar.on(StreamingEvents.STREAM_READY, (stream) => {
-        console.log('[AvatarSession] Stream ready event received');
+        console.log('[AvatarSession] Stream ready event received, notifying callbacks');
         config.onStreamReady?.(stream);
+        // Notify all registered callbacks
+        const callbackCount = this.streamReadyCallbacks.length;
+        console.log(`[AvatarSession] Notifying ${callbackCount} stream ready callbacks`);
+        this.streamReadyCallbacks.forEach((callback, index) => {
+          console.log(`[AvatarSession] Executing callback ${index + 1} of ${callbackCount}`);
+          try {
+            callback(stream);
+          } catch (error) {
+            console.error(`[AvatarSession] Error in stream ready callback ${index + 1}:`, error);
+          }
+        });
+        console.log('[AvatarSession] Finished notifying all callbacks');
       });
 
       this.avatar.on(StreamingEvents.AVATAR_START_TALKING, () => {
@@ -146,6 +177,7 @@ class AvatarSessionManager {
     } catch (error) {
       console.error('[AvatarSession] Failed to initialize session:', error);
       this.avatar = null;
+      this.lastConfig = null;
       throw error;
     }
   }
@@ -159,10 +191,10 @@ class AvatarSessionManager {
       await this.avatar.speak({
         text,
         taskMode: TaskMode.SYNC,
-        task_type: TaskType.REPEAT,
+        task_type: TaskType.REPEAT
       });
     } catch (error) {
-      console.error('[AvatarSessionManager] Failed to speak:', error);
+      console.error('[AvatarSession] Error speaking:', error);
       throw error;
     }
   }
@@ -189,6 +221,8 @@ class AvatarSessionManager {
         console.error('[AvatarSessionManager] Error ending session:', error);
       } finally {
         this.avatar = null;
+        this.lastConfig = null;
+        this.streamReadyCallbacks = []; // Clear callbacks on session end
       }
     }
   }
