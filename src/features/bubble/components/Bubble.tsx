@@ -35,9 +35,9 @@ export const Bubble = (props: BubbleProps) => {
     console.log('[Bubble] Checking conditions for welcome message:', {
       isBotOpened: isBotOpened(),
       isAvatarReady: isAvatarReady(),
-      hasSpokenWelcome: hasSpokenWelcome()
+      hasSpokenWelcome: hasSpokenWelcome(),
     });
-    
+
     const avatarManager = AvatarSessionManager.getInstance();
     if (isBotOpened() && isAvatarReady() && !hasSpokenWelcome()) {
       console.log('[Bubble] Avatar is ready and bot is opened, attempting welcome message');
@@ -51,22 +51,22 @@ export const Bubble = (props: BubbleProps) => {
       hasSpokenWelcome: hasSpokenWelcome(),
       welcomeMessage,
       themeConfig: props.theme?.chatWindow,
-      isAvatarReady: isAvatarReady()
+      isAvatarReady: isAvatarReady(),
     });
-    
+
     if (hasSpokenWelcome()) {
       console.log('[Bubble] Welcome message already spoken, skipping');
       return;
     }
-    
+
     if (!welcomeMessage) {
       console.log('[Bubble] No welcome message configured in theme, skipping');
       return;
     }
-    
+
     const avatarManager = AvatarSessionManager.getInstance();
     console.log('[Bubble] Avatar session active:', avatarManager.isSessionActive());
-    
+
     if (avatarManager.isSessionActive() && isAvatarReady()) {
       try {
         console.log('[Bubble] Attempting to speak welcome message:', welcomeMessage);
@@ -117,13 +117,13 @@ export const Bubble = (props: BubbleProps) => {
   // Add an effect to listen for avatar stream ready event
   createEffect(() => {
     if (!isBotStarted()) return;
-    
+
     console.log('[Bubble] Setting up stream ready listener, bot started:', isBotStarted());
     const avatarManager = AvatarSessionManager.getInstance();
-    
+
     // Clear any existing callbacks when the effect re-runs
     avatarManager.clearStreamReadyCallbacks();
-    
+
     console.log('[Bubble] Registering stream ready callback');
     avatarManager.onStreamReady((stream) => {
       console.log('[Bubble] Stream ready callback triggered');

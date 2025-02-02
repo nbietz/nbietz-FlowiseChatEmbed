@@ -191,7 +191,7 @@ class AvatarSessionManager {
       await this.avatar.speak({
         text,
         taskMode: TaskMode.SYNC,
-        task_type: TaskType.REPEAT
+        task_type: TaskType.REPEAT,
       });
     } catch (error) {
       console.error('[AvatarSession] Error speaking:', error);
