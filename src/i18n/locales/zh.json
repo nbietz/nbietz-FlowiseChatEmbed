@@ -1,0 +1,32 @@
+{
+  "common": {
+    "welcome": "欢迎使用我们的聊天机器人！",
+    "disclaimer": {
+      "title": "免责声明",
+      "message": "使用此聊天机器人即表示您同意服务条款",
+      "accept": "开始聊天",
+      "deny": "取消"
+    }
+  },
+  "chat": {
+    "inputPlaceholder": "在这里输入你的消息...",
+    "send": "发送",
+    "clear": "清除聊天",
+    "loading": "加载中...",
+    "errorMessage": "出现错误，请重试。",
+    "welcomeMessage": "你好！我能帮你什么？",
+    "poweredBy": "技术支持："
+  },
+  "avatar": {
+    "start": "启动虚拟形象",
+    "interrupt": "中断",
+    "end": "结束",
+    "title": "虚拟形象会话"
+  },
+  "feedback": {
+    "title": "这对您有帮助吗？",
+    "positive": "是",
+    "negative": "否",
+    "thank_you": "感谢您的反馈！"
+  }
+} 

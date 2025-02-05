@@ -1,0 +1,32 @@
+{
+  "common": {
+    "welcome": "Sohbet botumuza hoş geldiniz!",
+    "disclaimer": {
+      "title": "Sorumluluk Reddi",
+      "message": "Bu sohbet botunu kullanarak, Kullanım Koşullarını kabul etmiş olursunuz",
+      "accept": "Sohbete Başla",
+      "deny": "İptal"
+    }
+  },
+  "chat": {
+    "inputPlaceholder": "Mesajınızı buraya yazın...",
+    "send": "Gönder",
+    "clear": "Sohbeti Temizle",
+    "loading": "Yükleniyor...",
+    "errorMessage": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
+    "welcomeMessage": "Merhaba! Size bugün nasıl yardımcı olabilirim?",
+    "poweredBy": "Destekleyen: "
+  },
+  "avatar": {
+    "start": "Avatarı Başlat",
+    "interrupt": "Durdur",
+    "end": "Bitir",
+    "title": "Avatar Oturumu"
+  },
+  "feedback": {
+    "title": "Bu yardımcı oldu mu?",
+    "positive": "Evet",
+    "negative": "Hayır",
+    "thank_you": "Geri bildiriminiz için teşekkürler!"
+  }
+} 
