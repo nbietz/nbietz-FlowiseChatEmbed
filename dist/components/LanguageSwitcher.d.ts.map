@@ -1,0 +1,1 @@
+{"version":3,"file":"LanguageSwitcher.d.ts","sourceRoot":"","sources":["../../src/components/LanguageSwitcher.tsx"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAqB,MAAM,UAAU,CAAC;AACxD,OAAO,EAAE,MAAM,EAAoB,MAAM,gBAAgB,CAAC;AAG1D,UAAU,qBAAqB;IAC7B,gBAAgB,CAAC,EAAE,CAAC,MAAM,EAAE,MAAM,KAAK,IAAI,CAAC;CAC7C;AAED,eAAO,MAAM,gBAAgB,EAAE,SAAS,CAAC,qBAAqB,CAuB7D,CAAC"}
