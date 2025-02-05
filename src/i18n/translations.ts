@@ -33,7 +33,7 @@ const bundledTranslations: Record<Locale, Translations> = {
   ja,
   ru,
   tr,
-  he
+  he,
 };
 
 export class TranslationsManager {
