@@ -2,7 +2,7 @@ import { observersConfigType } from './components/Bot';
 import { BubbleTheme } from './features/bubble/types';
 
 /* eslint-disable solid/reactivity */
-type BotProps = {
+export type BotProps = {
   chatflowid: string;
   apiHost?: string;
   onRequest?: (request: RequestInit) => Promise<void>;

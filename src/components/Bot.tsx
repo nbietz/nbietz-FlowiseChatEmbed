@@ -39,6 +39,8 @@ import { fetchEventSource, EventStreamContentType } from '@microsoft/fetch-event
 import StreamingAvatar, { AvatarQuality, StreamingEvents, TaskMode, TaskType } from '@heygen/streaming-avatar';
 import { AvatarVideo } from './AvatarVideo';
 import AvatarSessionManager, { AvatarConfig } from '../services/AvatarSessionManager';
+import { t } from '@/i18n/translations';
+import { TranslationsManager } from '@/i18n/translations';
 
 export type FileEvent<T = EventTarget> = {
   target: T;
@@ -153,7 +155,13 @@ export type BotProps = {
   footer?: FooterTheme;
   sourceDocsTitle?: string;
   observersConfig?: observersConfigType;
-  starterPrompts?: string[] | Record<string, { prompt: string }>;
+  starterPrompts?:
+    | string[]
+    | {
+        [locale: string]: {
+          prompts: string[];
+        };
+      };
   starterPromptFontSize?: number;
   clearChatOnReload?: boolean;
   disclaimer?: DisclaimerPopUpTheme;
@@ -1076,20 +1084,45 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
     }
   });
 
+  const filterStarterPromptsByLocale = (prompts: Record<string, { prompts: string[] }>) => {
+    const translationsManager = TranslationsManager.getInstance();
+    const currentLocale = translationsManager.getCurrentLocale();
+    const baseLocale = currentLocale.split('-')[0]; // e.g., 'es' from 'es-MX'
+
+    // Try to find prompts in order of specificity
+    let selectedPrompts = prompts[currentLocale]?.prompts; // Try exact locale first
+
+    if (!selectedPrompts?.length) {
+      selectedPrompts = prompts[baseLocale]?.prompts; // Try base locale
+    }
+
+    if (!selectedPrompts?.length) {
+      selectedPrompts = prompts['en']?.prompts; // Try English as fallback
+    }
+
+    if (!selectedPrompts?.length) {
+      // If still no prompts found, take the first available set
+      const firstAvailableLocale = Object.keys(prompts)[0];
+      selectedPrompts = prompts[firstAvailableLocale]?.prompts;
+    }
+
+    return selectedPrompts || [];
+  };
+
+  // Update the starter prompts effect
   createEffect(() => {
     if (props.starterPrompts) {
-      let prompts: string[];
+      let prompts: string[] = [];
 
       if (Array.isArray(props.starterPrompts)) {
-        // If starterPrompts is an array
+        // If starterPrompts is an array, use as-is (no localization)
         prompts = props.starterPrompts;
       } else {
-        // If starterPrompts is a JSON object
-        prompts = Object.values(props.starterPrompts).map((promptObj: { prompt: string }) => promptObj.prompt);
+        // If starterPrompts is a JSON object with locale keys
+        prompts = filterStarterPromptsByLocale(props.starterPrompts);
       }
 
-      // Filter out any empty prompts
-      return setStarterPrompts(prompts.filter((prompt) => prompt !== ''));
+      return setStarterPrompts(prompts);
     }
   });
 
@@ -1616,26 +1649,26 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
                 <Show when={avatarStream()}>
                   <button
                     class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
-                    title="Stop current speech"
                     onClick={handleInterruptAvatar}
+                    title={t('avatar.interrupt')}
                   >
-                    Interrupt
+                    {t('avatar.interrupt')}
                   </button>
                   <button
                     class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
-                    title="End avatar session"
                     onClick={handleEndAvatarSession}
+                    title={t('avatar.end')}
                   >
-                    End
+                    {t('avatar.end')}
                   </button>
                 </Show>
                 <Show when={!avatarStream()}>
                   <button
                     class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
-                    title="Start avatar session"
                     onClick={handleStartAvatarSession}
+                    title={t('avatar.start')}
                   >
-                    Start Avatar
+                    {t('avatar.start')}
                   </button>
                 </Show>
               </div>
