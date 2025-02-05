@@ -3,8 +3,8 @@ import { BubbleTheme } from './features/bubble/types';
 
 /* eslint-disable solid/reactivity */
 export type BotProps = {
-  chatflowid: string;  // Required - chatflow identifier
-  apiHost: string;     // Required - API host URL
+  chatflowid: string; // Required - chatflow identifier
+  apiHost: string; // Required - API host URL
   onRequest?: (request: RequestInit) => Promise<void>;
   chatflowConfig?: Record<string, unknown>;
   observersConfig?: observersConfigType;
