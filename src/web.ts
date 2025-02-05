@@ -8,7 +8,17 @@ registerWebComponents();
 
 export default class Chatbot {
   static async init(config: BotProps) {
-    console.log('[Chatbot] Starting initialization with translations');
+    console.log('[Chatbot] Starting initialization');
+
+    // Validate required parameters
+    if (!config.chatflowid) {
+      throw new Error('[Chatbot] chatflowid is required but was not provided');
+    }
+    if (!config.apiHost) {
+      throw new Error('[Chatbot] apiHost is required but was not provided');
+    }
+
+    console.log('[Chatbot] Initializing with translations');
 
     // Initialize translations
     const translationsManager = TranslationsManager.getInstance();
@@ -52,14 +62,7 @@ export default class Chatbot {
   }
 }
 
-// Initialize chatbot if window object exists
+// Only register the Chatbot class in the window object
 if (typeof window !== 'undefined') {
-  const defaultConfig: BotProps = {
-    chatflowid: 'agent1',
-    apiHost: 'http://localhost:3001',
-  };
-
-  Chatbot.init(defaultConfig).catch((error) => {
-    console.error('[Chatbot] Initialization failed:', error);
-  });
+  (window as any).Chatbot = Chatbot;
 }

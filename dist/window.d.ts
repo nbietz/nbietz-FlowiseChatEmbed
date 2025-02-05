@@ -2,7 +2,7 @@ import { observersConfigType } from './components/Bot';
 import { BubbleTheme } from './features/bubble/types';
 export type BotProps = {
     chatflowid: string;
-    apiHost?: string;
+    apiHost: string;
     onRequest?: (request: RequestInit) => Promise<void>;
     chatflowConfig?: Record<string, unknown>;
     observersConfig?: observersConfigType;
