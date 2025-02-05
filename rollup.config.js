@@ -10,33 +10,8 @@ import { typescriptPaths } from 'rollup-plugin-typescript-paths';
 import commonjs from '@rollup/plugin-commonjs';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
-import fs from 'fs';
-import path from 'path';
 
 const isDev = process.env.NODE_ENV === 'development';
-
-// Function to copy translation files
-function copyTranslations() {
-  return {
-    name: 'copy-translations',
-    buildEnd() {
-      const srcDir = path.join('src', 'i18n', 'locales');
-      const destDir = path.join('dist', 'locales');
-
-      // Create the destination directory if it doesn't exist
-      if (!fs.existsSync(destDir)) {
-        fs.mkdirSync(destDir, { recursive: true });
-      }
-
-      // Copy all JSON files from src/i18n/locales to dist/locales
-      fs.readdirSync(srcDir)
-        .filter((file) => file.endsWith('.json'))
-        .forEach((file) => {
-          fs.copyFileSync(path.join(srcDir, file), path.join(destDir, file));
-        });
-    },
-  };
-}
 
 const extensions = ['.ts', '.tsx'];
 
@@ -62,18 +37,17 @@ const indexConfig = {
     }),
     typescript(),
     typescriptPaths({ preserveExtensions: true }),
-    copyTranslations(),
     terser({ output: { comments: false } }),
     ...(isDev
       ? [
           serve({
             open: true,
             verbose: true,
-            contentBase: ['dist', 'public', 'src/i18n'], // Add src/i18n to contentBase
+            contentBase: ['dist', 'public'],
             host: 'localhost',
             port: 5678,
           }),
-          livereload({ watch: ['dist', 'src/i18n/locales'] }), // Watch translation files
+          livereload({ watch: ['dist'] }),
         ]
       : []),
   ],

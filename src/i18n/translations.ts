@@ -6,6 +6,36 @@ export interface Translations {
   [key: TranslationKey]: string | { [key: string]: any };
 }
 
+// Import all translations directly
+import en from './locales/en.json';
+import es from './locales/es.json';
+import esMX from './locales/es-MX.json';
+import fr from './locales/fr.json';
+import de from './locales/de.json';
+import zh from './locales/zh.json';
+import hi from './locales/hi.json';
+import ar from './locales/ar.json';
+import ja from './locales/ja.json';
+import ru from './locales/ru.json';
+import tr from './locales/tr.json';
+import he from './locales/he.json';
+
+// Create a map of all translations
+const bundledTranslations: Record<Locale, Translations> = {
+  en,
+  es,
+  'es-MX': esMX,
+  fr,
+  de,
+  zh,
+  hi,
+  ar,
+  ja,
+  ru,
+  tr,
+  he
+};
+
 export class TranslationsManager {
   private static instance: TranslationsManager;
   private translations: Map<Locale, Translations> = new Map();
@@ -13,6 +43,10 @@ export class TranslationsManager {
 
   private constructor() {
     console.log('[TranslationsManager] Initialized with default locale:', defaultLocale);
+    // Initialize with bundled translations
+    Object.entries(bundledTranslations).forEach(([locale, translations]) => {
+      this.translations.set(locale as Locale, translations);
+    });
   }
 
   static getInstance(): TranslationsManager {
@@ -34,21 +68,10 @@ export class TranslationsManager {
 
   async loadTranslations(locale: Locale) {
     console.log('[TranslationsManager] Loading translations for locale:', locale);
-    try {
-      // Use fetch instead of dynamic import for JSON files
-      const response = await fetch(`/locales/${locale}.json`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const translations = await response.json();
-      console.log('[TranslationsManager] Loaded translations:', translations);
-      this.translations.set(locale, translations);
-    } catch (error) {
-      console.warn(`[TranslationsManager] Failed to load translations for locale: ${locale}`, error);
-      // If loading fails, try to load fallback locale
-      if (locale !== fallbackLocale) {
-        await this.loadTranslations(fallbackLocale);
-      }
+    // No need to fetch - translations are already loaded
+    if (!this.translations.has(locale) && locale !== fallbackLocale) {
+      console.warn(`[TranslationsManager] No translations found for locale: ${locale}, falling back to ${fallbackLocale}`);
+      return;
     }
   }
 
