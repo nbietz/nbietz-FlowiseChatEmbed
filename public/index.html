@@ -120,10 +120,21 @@
                         quality: "",                            // Optional: Low, Medium, High
                         language: ""                            // Optional: default 'en'
                     },
-                    starterPrompts: ['What is Flowise?', 'How can I get started with my own chatbot?'],
-                    starterPromptFontSize: 15,
                     clearChatOnReload: false,
-                    welcomeMessage: "Hello! This is your AI assistant.",
+                    welcomeMessage: {
+                        'en': "Hello! This is your AI assistant.",
+                        'es': "¡Hola! Este es tu asistente de IA.",
+                        'es-MX': "¡Hola! Este es tu asistente de IA.",
+                        'fr': "Bonjour ! Je suis votre assistant IA.",
+                        'de': "Hallo! Ich bin Ihr KI-Assistent.",
+                        'zh': "你好！这是你的 AI 助手。",
+                        'hi': "नमस्ते! यह आपका AI सहायक है।",
+                        'ar': "مرحباً! هذا هو مساعدك الذكي.",
+                        'ja': "こんにちは！AIアシスタントです。",
+                        'ru': "Здравствуйте! Я ваш ИИ-ассистент.",
+                        'tr': "Merhaba! Ben sizin yapay zeka asistanınızım.",
+                        'he': ".שלום! אני העוזר הבינה המלאכותית שלך"
+                    },
                     backgroundColor: "transparent",
                     height: 700,
                     width: 400,
@@ -142,24 +153,163 @@
                         avatarSrc: "https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png",
                     },
                     textInput: {
-                        placeholder: "Type your message here...",
+                        placeholder: {
+                            'en': "Type your message here...",
+                            'es': "Escribe tu mensaje aquí...",
+                            'es-MX': "Escribe tu mensaje aquí...",
+                            'fr': "Écrivez votre message ici...",
+                            'de': "Schreiben Sie Ihre Nachricht hier...",
+                            'zh': "在这里输入你的消息...",
+                            'hi': "यहां अपना संदेश लिखें...",
+                            'ar': "اكتب رسالتك هنا...",
+                            'ja': "メッセージを入力してください...",
+                            'ru': "Введите ваше сообщение здесь...",
+                            'tr': "Mesajınızı buraya yazın...",
+                            'he': "...הקלד את ההודעה שלך כאן"
+                        },
                         backgroundColor: "rgba(30, 41, 59, 0.8)",
                         textColor: "#e2e8f0",
                         sendButtonColor: "#3B81F6",
                     },
+                    starterPrompts: {
+                        'en': {
+                            prompts: [
+                                "What is Flowise?",
+                                "How can I get started with my own chatbot?",
+                                "What features does Flowise offer?"
+                            ]
+                        },
+                        'es': {
+                            prompts: [
+                                "¿Qué es Flowise?",
+                                "¿Cómo puedo empezar con mi propio chatbot?",
+                                "¿Qué características ofrece Flowise?"
+                            ]
+                        },
+                        'es-MX': {
+                            prompts: [
+                                "¿Qué es Flowise?",
+                                "¿Cómo puedo comenzar con mi propio chatbot?",
+                                "¿Qué funciones ofrece Flowise?"
+                            ]
+                        },
+                        'fr': {
+                            prompts: [
+                                "Qu'est-ce que Flowise ?",
+                                "Comment puis-je créer mon propre chatbot ?",
+                                "Quelles fonctionnalités offre Flowise ?"
+                            ]
+                        },
+                        'de': {
+                            prompts: [
+                                "Was ist Flowise?",
+                                "Wie kann ich meinen eigenen Chatbot erstellen?",
+                                "Welche Funktionen bietet Flowise?"
+                            ]
+                        },
+                        'zh': {
+                            prompts: [
+                                "什么是 Flowise？",
+                                "如何开始使用自己的聊天机器人？",
+                                "Flowise 提供哪些功能？"
+                            ]
+                        },
+                        'hi': {
+                            prompts: [
+                                "Flowise क्या है?",
+                                "मैं अपना चैटबॉट कैसे शुरू कर सकता हूं?",
+                                "Flowise कौन-कौन सी सुविधाएं प्रदान करता है?"
+                            ]
+                        },
+                        'ar': {
+                            prompts: [
+                                "ما هو Flowise؟",
+                                "كيف يمكنني البدء مع روبوت المحادثة الخاص بي؟",
+                                "ما هي الميزات التي يقدمها Flowise؟"
+                            ]
+                        },
+                        'ja': {
+                            prompts: [
+                                "Flowiseとは何ですか？",
+                                "自分のチャットボットを始めるにはどうすればよいですか？",
+                                "Flowiseはどのような機能を提供していますか？"
+                            ]
+                        },
+                        'ru': {
+                            prompts: [
+                                "Что такое Flowise?",
+                                "Как мне начать работу с собственным чат-ботом?",
+                                "Какие функции предлагает Flowise?"
+                            ]
+                        },
+                        'tr': {
+                            prompts: [
+                                "Flowise nedir?",
+                                "Kendi sohbet botumu nasıl başlatabilirim?",
+                                "Flowise hangi özellikleri sunuyor?"
+                            ]
+                        },
+                        'he': {
+                            prompts: [
+                                "?Flowise מה זה",
+                                "?איך אני יכול להתחיל עם הצ'אטבוט שלי",
+                                "?מציע Flowise אילו תכונות"
+                            ]
+                        }
+                    },
+                    starterPromptFontSize: 15,
                     feedback: {
                         color: "#3B81F6"
                     }
                 },
                 footer: {
                     textColor: "#94a3b8",
-                    text: "Powered by",
-                    company: "FLowiseAI",
+                    text: {
+                        'en': "Powered by",
+                        'es': "Desarrollado por",
+                        'es-MX': "Desarrollado por",
+                        'fr': "Propulsé par",
+                        'de': "Bereitgestellt von",
+                        'zh': "技术支持：",
+                        'hi': "द्वारा संचालित",
+                        'ar': "مشغل بواسطة",
+                        'ja': "により提供",
+                        'ru': "Работает на",
+                        'tr': "Destekleyen:",
+                        'he': "מופעל על ידי"
+                    },
+                    company: "FlowiseAI",
                     companyLink: "https://flowiseai.com/"
                 },
                 disclaimer: {
-                    title: 'Disclaimer',
-                    message: 'By using this chatbot, you agree to the <a target="_blank" href="https://flowiseai.com/terms">Terms & Condition</a>',
+                    title: {
+                        'en': 'Disclaimer',
+                        'es': 'Aviso Legal',
+                        'es-MX': 'Aviso Legal',
+                        'fr': 'Avertissement',
+                        'de': 'Haftungsausschluss',
+                        'zh': '免责声明',
+                        'hi': 'अस्वीकरण',
+                        'ar': 'إخلاء المسؤولية',
+                        'ja': '免責事項',
+                        'ru': 'Отказ от ответственности',
+                        'tr': 'Sorumluluk Reddi',
+                        'he': 'כתב ויתור'
+                    },
+                    message: {
+                        'en': 'By using this chatbot, you agree to the <a target="_blank" href="https://flowiseai.com/terms">Terms & Conditions</a>',
+                        'es': 'Al usar este chatbot, aceptas los <a target="_blank" href="https://flowiseai.com/terms">Términos y Condiciones</a>',
+                        'es-MX': 'Al usar este chatbot, aceptas los <a target="_blank" href="https://flowiseai.com/terms">Términos y Condiciones</a>',
+                        'fr': 'En utilisant ce chatbot, vous acceptez les <a target="_blank" href="https://flowiseai.com/terms">Conditions d\'utilisation</a>',
+                        'de': 'Durch die Nutzung dieses Chatbots stimmen Sie den <a target="_blank" href="https://flowiseai.com/terms">Nutzungsbedingungen</a> zu',
+                        'zh': '使用此聊天机器人即表示您同意<a target="_blank" href="https://flowiseai.com/terms">服务条款</a>',
+                        'hi': 'इस चैटबॉट का उपयोग करके, आप <a target="_blank" href="https://flowiseai.com/terms">नियम और शर्तों</a> से सहमत हैं',
+                        'ar': 'باستخدام روبوت المحادثة هذا، فإنك توافق على <a target="_blank" href="https://flowiseai.com/terms">الشروط والأحكام</a>',
+                        'ja': 'このチャットボットを使用することで、<a target="_blank" href="https://flowiseai.com/terms">利用規約</a>に同意したことになります',
+                        'ru': 'Используя этот чат-бот, вы соглашаетесь с <a target="_blank" href="https://flowiseai.com/terms">Условиями использования</a>',
+                        'tr': 'Bu sohbet botunu kullanarak <a target="_blank" href="https://flowiseai.com/terms">Kullanım Koşullarını</a> kabul etmiş olursunuz',
+                        'he': 'בשימוש בצ\'אטבוט זה, אתה מסכים ל<a target="_blank" href="https://flowiseai.com/terms">תנאים וההגבלות</a>'
+                    }
                 }
             }
         };
