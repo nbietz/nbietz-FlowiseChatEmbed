@@ -1,0 +1,1 @@
+{"version":3,"file":"languageDetector.d.ts","sourceRoot":"","sources":["../../src/i18n/languageDetector.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAmC,MAAM,UAAU,CAAC;AAEnE,qBAAa,gBAAgB;IAC3B,OAAO,CAAC,MAAM,CAAC,eAAe;IAe9B,MAAM,CAAC,iBAAiB,IAAI,MAAM;IAelC,MAAM,CAAC,aAAa,IAAI,MAAM,GAAG,IAAI;IAwBrC,MAAM,CAAC,MAAM,IAAI,MAAM;CAYxB"}

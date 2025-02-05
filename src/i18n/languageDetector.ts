@@ -3,16 +3,12 @@ import { Locale, supportedLocales, defaultLocale } from './config';
 export class LanguageDetector {
   private static findLocaleMatch(searchLocale: string): Locale | undefined {
     // First try exact match
-    const exactMatch = supportedLocales.find(
-      locale => locale.code.toLowerCase() === searchLocale.toLowerCase()
-    );
+    const exactMatch = supportedLocales.find((locale) => locale.code.toLowerCase() === searchLocale.toLowerCase());
     if (exactMatch) return exactMatch.code;
 
     // If no exact match, try base language match
     const baseLanguage = searchLocale.toLowerCase().split(/[_-]/)[0];
-    const baseMatch = supportedLocales.find(
-      locale => locale.code.toLowerCase().split(/[_-]/)[0] === baseLanguage
-    );
+    const baseMatch = supportedLocales.find((locale) => locale.code.toLowerCase().split(/[_-]/)[0] === baseLanguage);
     return baseMatch?.code;
   }
 
@@ -21,7 +17,7 @@ export class LanguageDetector {
 
     // Get browser languages
     const browserLanguages = navigator.languages || [navigator.language];
-    
+
     // Try to find a match from browser's preferred languages
     for (const browserLang of browserLanguages) {
       const match = this.findLocaleMatch(browserLang);
@@ -46,7 +42,7 @@ export class LanguageDetector {
     // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const langParam = urlParams.get('lang');
-    
+
     if (langParam) {
       const match = this.findLocaleMatch(langParam);
       if (match) return match;
@@ -67,4 +63,4 @@ export class LanguageDetector {
     // Fallback to default locale
     return defaultLocale;
   }
-} 
+}

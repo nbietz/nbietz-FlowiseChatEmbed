@@ -34,11 +34,7 @@ export const LanguageProvider: ParentComponent = (props) => {
     setLocale,
   };
 
-  return (
-    <LanguageContext.Provider value={value}>
-      {props.children}
-    </LanguageContext.Provider>
-  );
+  return <LanguageContext.Provider value={value}>{props.children}</LanguageContext.Provider>;
 };
 
 export const useLanguage = () => {
@@ -47,4 +43,4 @@ export const useLanguage = () => {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
-}; 
+};

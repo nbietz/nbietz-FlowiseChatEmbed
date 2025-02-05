@@ -1,0 +1,32 @@
+{
+  "common": {
+    "welcome": "Welcome to our chatbot!",
+    "disclaimer": {
+      "title": "Disclaimer",
+      "message": "By using this chatbot, you agree to the Terms & Conditions",
+      "accept": "Start Chatting",
+      "deny": "Cancel"
+    }
+  },
+  "chat": {
+    "inputPlaceholder": "Type your message here...",
+    "send": "Send",
+    "clear": "Clear Chat",
+    "loading": "Loading...",
+    "errorMessage": "Something went wrong. Please try again.",
+    "welcomeMessage": "Hello! How can I help you today?",
+    "poweredBy": "Powered by "
+  },
+  "avatar": {
+    "start": "Start Avatar",
+    "interrupt": "Interrupt",
+    "end": "End",
+    "title": "Avatar Session"
+  },
+  "feedback": {
+    "title": "Was this helpful?",
+    "positive": "Yes",
+    "negative": "No",
+    "thank_you": "Thank you for your feedback!"
+  }
+} 

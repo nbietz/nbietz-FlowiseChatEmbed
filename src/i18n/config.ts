@@ -21,7 +21,7 @@ export const supportedLocales: LocaleConfig[] = [
   { code: 'ja', name: '日本語' },
   { code: 'ru', name: 'Русский' },
   { code: 'tr', name: 'Türkçe' },
-  { code: 'he', name: 'עברית', dir: 'rtl' }
+  { code: 'he', name: 'עברית', dir: 'rtl' },
 ];
 
-export const fallbackLocale: Locale = 'en'; 
+export const fallbackLocale: Locale = 'en';

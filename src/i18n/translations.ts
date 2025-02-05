@@ -55,7 +55,7 @@ export class TranslationsManager {
   translate(key: TranslationKey, params: { [key: string]: string | number } = {}): string {
     console.log('[TranslationsManager] Translating key:', key, 'with params:', params);
     const translations = this.translations.get(this.currentLocale) || this.translations.get(fallbackLocale);
-    
+
     if (!translations) {
       console.warn(`[TranslationsManager] No translations found for locale: ${this.currentLocale}`);
       return key;
@@ -95,4 +95,4 @@ export class TranslationsManager {
 // Create a convenient shorthand function for translations
 export const t = (key: TranslationKey, params?: { [key: string]: string | number }): string => {
   return TranslationsManager.getInstance().translate(key, params);
-}; 
+};
