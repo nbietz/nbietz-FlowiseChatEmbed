@@ -22,22 +22,19 @@ function copyTranslations() {
     buildEnd() {
       const srcDir = path.join('src', 'i18n', 'locales');
       const destDir = path.join('dist', 'locales');
-      
+
       // Create the destination directory if it doesn't exist
       if (!fs.existsSync(destDir)) {
         fs.mkdirSync(destDir, { recursive: true });
       }
-      
+
       // Copy all JSON files from src/i18n/locales to dist/locales
       fs.readdirSync(srcDir)
-        .filter(file => file.endsWith('.json'))
-        .forEach(file => {
-          fs.copyFileSync(
-            path.join(srcDir, file),
-            path.join(destDir, file)
-          );
+        .filter((file) => file.endsWith('.json'))
+        .forEach((file) => {
+          fs.copyFileSync(path.join(srcDir, file), path.join(destDir, file));
         });
-    }
+    },
   };
 }
 
@@ -52,11 +49,7 @@ const indexConfig = {
     babel({
       babelHelpers: 'bundled',
       exclude: 'node_modules/**',
-      presets: [
-        '@babel/preset-env',
-        'solid',
-        ['@babel/preset-typescript', { isTSX: true, allExtensions: true }]
-      ],
+      presets: ['@babel/preset-env', 'solid', ['@babel/preset-typescript', { isTSX: true, allExtensions: true }]],
       extensions,
     }),
     postcss({
@@ -76,11 +69,11 @@ const indexConfig = {
           serve({
             open: true,
             verbose: true,
-            contentBase: ['dist', 'public', 'src/i18n'],  // Add src/i18n to contentBase
+            contentBase: ['dist', 'public', 'src/i18n'], // Add src/i18n to contentBase
             host: 'localhost',
             port: 5678,
           }),
-          livereload({ watch: ['dist', 'src/i18n/locales'] }),  // Watch translation files
+          livereload({ watch: ['dist', 'src/i18n/locales'] }), // Watch translation files
         ]
       : []),
   ],
