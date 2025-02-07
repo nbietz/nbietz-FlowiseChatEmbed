@@ -1,4 +1,24 @@
-export type Locale = 'en' | 'es' | 'es-MX' | 'fr' | 'de' | 'zh' | 'hi' | 'ar' | 'ja' | 'ru' | 'tr' | 'he' | 'it' | 'pt-BR' | 'pt' | 'ko' | 'id' | 'pl' | 'vi' | string;
+export type Locale =
+  | 'en'
+  | 'es'
+  | 'es-MX'
+  | 'fr'
+  | 'de'
+  | 'zh'
+  | 'hi'
+  | 'ar'
+  | 'ja'
+  | 'ru'
+  | 'tr'
+  | 'he'
+  | 'it'
+  | 'pt-BR'
+  | 'pt'
+  | 'ko'
+  | 'id'
+  | 'pl'
+  | 'vi'
+  | string;
 
 export interface LocaleConfig {
   code: Locale;
@@ -28,7 +48,7 @@ export const supportedLocales: LocaleConfig[] = [
   { code: 'ko', name: '한국어' },
   { code: 'id', name: 'Bahasa Indonesia' },
   { code: 'pl', name: 'Polski' },
-  { code: 'vi', name: 'Tiếng Việt' }
+  { code: 'vi', name: 'Tiếng Việt' },
 ];
 
 export const fallbackLocale: Locale = 'en';
