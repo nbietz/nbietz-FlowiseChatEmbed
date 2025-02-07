@@ -110,12 +110,16 @@ export type BotProps = {
     closeBot?: () => void;
     theme?: {
         chatWindow?: {
-            welcomeMessage?: string;
+            welcomeMessage?: string | {
+                [locale: string]: string;
+            };
             errorMessage?: string;
             title?: string;
             sourceDocsTitle?: string;
             textInput?: {
-                placeholder?: string;
+                placeholder?: string | {
+                    [locale: string]: string;
+                };
                 maxCharsWarningMessage?: string;
             };
         };
