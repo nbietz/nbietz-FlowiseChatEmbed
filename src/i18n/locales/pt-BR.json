@@ -1,0 +1,37 @@
+{
+  "common": {
+    "welcome": "Bem-vindo ao nosso chatbot!",
+    "disclaimer": {
+      "title": "Aviso Legal",
+      "message": "Ao usar este chatbot, você concorda com os Termos e Condições",
+      "accept": "Iniciar Chat",
+      "deny": "Cancelar"
+    }
+  },
+  "chat": {
+    "title": "",
+    "inputPlaceholder": "Digite sua mensagem aqui...",
+    "send": "Enviar",
+    "clear": "Limpar Chat",
+    "loading": "Carregando...",
+    "errorMessage": "Algo deu errado. Por favor, tente novamente.",
+    "welcomeMessage": "Olá! Como posso ajudar você hoje?",
+    "poweredBy": "Desenvolvido por",
+    "maxCharsWarning": "Mensagem muito longa. Por favor, limite a {maxChars} caracteres.",
+    "tooltipMessage": "Chat com Assistente IA",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Fontes:"
+  },
+  "avatar": {
+    "start": "Iniciar Avatar",
+    "interrupt": "Interromper",
+    "end": "Finalizar",
+    "title": "Sessão do Avatar"
+  },
+  "feedback": {
+    "title": "Isso foi útil?",
+    "positive": "Sim",
+    "negative": "Não",
+    "thank_you": "Obrigado pelo seu feedback!"
+  }
+} 

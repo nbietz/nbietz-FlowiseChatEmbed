@@ -1,0 +1,37 @@
+{
+  "common": {
+    "welcome": "Selamat datang di chatbot kami!",
+    "disclaimer": {
+      "title": "Pemberitahuan",
+      "message": "Dengan menggunakan chatbot ini, Anda menyetujui Syarat dan Ketentuan",
+      "accept": "Mulai Chat",
+      "deny": "Batal"
+    }
+  },
+  "chat": {
+    "title": "",
+    "inputPlaceholder": "Ketik pesan Anda di sini...",
+    "send": "Kirim",
+    "clear": "Hapus Chat",
+    "loading": "Memuat...",
+    "errorMessage": "Terjadi kesalahan. Silakan coba lagi.",
+    "welcomeMessage": "Halo! Bagaimana saya bisa membantu Anda hari ini?",
+    "poweredBy": "Didukung oleh",
+    "maxCharsWarning": "Pesan terlalu panjang. Harap batasi hingga {maxChars} karakter.",
+    "tooltipMessage": "Chat dengan Asisten AI",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Sumber:"
+  },
+  "avatar": {
+    "start": "Mulai Avatar",
+    "interrupt": "Interupsi",
+    "end": "Selesai",
+    "title": "Sesi Avatar"
+  },
+  "feedback": {
+    "title": "Apakah ini membantu?",
+    "positive": "Ya",
+    "negative": "Tidak",
+    "thank_you": "Terima kasih atas feedback Anda!"
+  }
+} 

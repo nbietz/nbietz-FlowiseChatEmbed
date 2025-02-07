@@ -19,6 +19,13 @@ import ja from './locales/ja.json';
 import ru from './locales/ru.json';
 import tr from './locales/tr.json';
 import he from './locales/he.json';
+import it from './locales/it.json';
+import ptBR from './locales/pt-BR.json';
+import pt from './locales/pt.json';
+import ko from './locales/ko.json';
+import id from './locales/id.json';
+import pl from './locales/pl.json';
+import vi from './locales/vi.json';
 
 // Create a map of all translations
 const bundledTranslations: Record<Locale, Translations> = {
@@ -34,6 +41,13 @@ const bundledTranslations: Record<Locale, Translations> = {
   ru,
   tr,
   he,
+  it,
+  'pt-BR': ptBR,
+  pt,
+  ko,
+  id,
+  pl,
+  vi,
 };
 
 export class TranslationsManager {
@@ -84,22 +98,23 @@ export class TranslationsManager {
       return key;
     }
 
-    let translation = this.getNestedTranslation(translations, key);
+    const translation = this.getNestedTranslation(translations, key);
 
-    if (!translation) {
+    // Only return the key if the translation is undefined (not found)
+    // This allows empty strings to be valid translations
+    if (translation === undefined) {
       console.warn(`[TranslationsManager] Translation key not found: ${key}`);
       return key;
     }
 
     // Replace parameters in translation string if it's a string
     if (typeof translation === 'string') {
+      let result = translation;
       Object.entries(params).forEach(([param, value]) => {
-        if (translation) {
-          translation = translation.replace(new RegExp(`{{${param}}}`, 'g'), String(value));
-        }
+        result = result.replace(new RegExp(`{{${param}}}`, 'g'), String(value));
       });
-      console.log('[TranslationsManager] Translated result:', translation);
-      return translation;
+      console.log('[TranslationsManager] Translated result:', result);
+      return result;
     }
 
     console.warn(`[TranslationsManager] Translation value is not a string: ${key}`);
@@ -108,7 +123,8 @@ export class TranslationsManager {
 
   private getNestedTranslation(obj: any, path: string): string | undefined {
     const result = path.split('.').reduce((prev, curr) => {
-      return prev ? prev[curr] : undefined;
+      // Check if prev exists and has the property (even if it's an empty string)
+      return prev === undefined || prev === null ? undefined : prev[curr];
     }, obj);
     console.log('[TranslationsManager] Getting nested translation for path:', path, 'result:', result);
     return result;

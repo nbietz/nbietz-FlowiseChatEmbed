@@ -1,0 +1,37 @@
+{
+  "common": {
+    "welcome": "Chào mừng đến với chatbot của chúng tôi!",
+    "disclaimer": {
+      "title": "Tuyên bố miễn trừ",
+      "message": "Bằng việc sử dụng chatbot này, bạn đồng ý với Điều khoản và Điều kiện",
+      "accept": "Bắt đầu Chat",
+      "deny": "Hủy"
+    }
+  },
+  "chat": {
+    "title": "",
+    "inputPlaceholder": "Nhập tin nhắn của bạn tại đây...",
+    "send": "Gửi",
+    "clear": "Xóa Chat",
+    "loading": "Đang tải...",
+    "errorMessage": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "welcomeMessage": "Xin chào! Tôi có thể giúp gì cho bạn hôm nay?",
+    "poweredBy": "Được cung cấp bởi",
+    "maxCharsWarning": "Tin nhắn quá dài. Vui lòng giới hạn trong {maxChars} ký tự.",
+    "tooltipMessage": "Chat với Trợ lý AI",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Nguồn:"
+  },
+  "avatar": {
+    "start": "Bắt đầu Avatar",
+    "interrupt": "Tạm dừng",
+    "end": "Kết thúc",
+    "title": "Phiên Avatar"
+  },
+  "feedback": {
+    "title": "Điều này có hữu ích không?",
+    "positive": "Có",
+    "negative": "Không",
+    "thank_you": "Cảm ơn phản hồi của bạn!"
+  }
+} 

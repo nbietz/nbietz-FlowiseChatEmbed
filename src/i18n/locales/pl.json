@@ -1,0 +1,37 @@
+{
+  "common": {
+    "welcome": "Witamy w naszym chatbocie!",
+    "disclaimer": {
+      "title": "Zastrzeżenie",
+      "message": "Korzystając z tego chatbota, akceptujesz Regulamin",
+      "accept": "Rozpocznij Czat",
+      "deny": "Anuluj"
+    }
+  },
+  "chat": {
+    "title": "",
+    "inputPlaceholder": "Wpisz swoją wiadomość tutaj...",
+    "send": "Wyślij",
+    "clear": "Wyczyść Czat",
+    "loading": "Ładowanie...",
+    "errorMessage": "Coś poszło nie tak. Spróbuj ponownie.",
+    "welcomeMessage": "Cześć! Jak mogę Ci dziś pomóc?",
+    "poweredBy": "Obsługiwane przez",
+    "maxCharsWarning": "Wiadomość jest za długa. Ogranicz ją do {maxChars} znaków.",
+    "tooltipMessage": "Czat z Asystentem AI",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Źródła:"
+  },
+  "avatar": {
+    "start": "Uruchom Awatar",
+    "interrupt": "Przerwij",
+    "end": "Zakończ",
+    "title": "Sesja Awatara"
+  },
+  "feedback": {
+    "title": "Czy to było pomocne?",
+    "positive": "Tak",
+    "negative": "Nie",
+    "thank_you": "Dziękujemy za opinię!"
+  }
+} 
