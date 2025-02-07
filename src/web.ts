@@ -27,10 +27,26 @@ export default class Chatbot {
     translationsManager.setLocale(detectedLocale);
 
     // Helper function to handle both direct translations and translation keys
-    const getTranslation = (value: string | Record<string, string> | undefined, key: string) => {
+    const getTranslation = (value: string | Record<string, string | Record<string, any>> | undefined, key: string) => {
       if (!value) return translationsManager.translate(key);
       if (typeof value === 'string') return value;
-      return value[detectedLocale] || value['en'] || translationsManager.translate(key);
+
+      // Handle nested objects (like welcomeMessage)
+      const translation = value[detectedLocale];
+      if (translation) {
+        if (typeof translation === 'string') return translation;
+        if (typeof translation === 'object' && 'prompts' in translation) return translation.prompts;
+      }
+
+      // Try English fallback
+      const englishTranslation = value['en'];
+      if (englishTranslation) {
+        if (typeof englishTranslation === 'string') return englishTranslation;
+        if (typeof englishTranslation === 'object' && 'prompts' in englishTranslation) return englishTranslation.prompts;
+      }
+
+      // Final fallback to translation system
+      return translationsManager.translate(key);
     };
 
     // Update config with translated strings

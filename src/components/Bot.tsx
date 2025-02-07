@@ -164,12 +164,12 @@ export type BotProps = {
   closeBot?: () => void;
   theme?: {
     chatWindow?: {
-      welcomeMessage?: string;
+      welcomeMessage?: string | { [locale: string]: string };
       errorMessage?: string;
       title?: string;
       sourceDocsTitle?: string;
       textInput?: {
-        placeholder?: string;
+        placeholder?: string | { [locale: string]: string };
         maxCharsWarningMessage?: string;
       };
     };
@@ -401,7 +401,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
   const [messages, setMessages] = createSignal<MessageType[]>(
     [
       {
-        message: props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage,
+        message: getLocalizedMessage(props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage),
         type: 'apiMessage',
       },
     ],
@@ -1076,7 +1076,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
       setLoading(false);
       const messages: MessageType[] = [
         {
-          message: props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage,
+          message: getLocalizedMessage(props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage),
           type: 'apiMessage',
         },
       ];
@@ -1209,7 +1209,12 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
               if (message.followUpPrompts) chatHistory.followUpPrompts = message.followUpPrompts;
               return chatHistory;
             })
-          : [{ message: props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage, type: 'apiMessage' }];
+          : [
+              {
+                message: getLocalizedMessage(props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage),
+                type: 'apiMessage',
+              },
+            ];
 
       const filteredMessages = loadedMessages.filter((message) => message.type !== 'leadCaptureMessage');
       setMessages([...filteredMessages]);
@@ -1270,7 +1275,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
       setLoading(false);
       setMessages([
         {
-          message: props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage,
+          message: getLocalizedMessage(props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage),
           type: 'apiMessage',
         },
       ]);
@@ -1983,4 +1988,12 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
       )}
     </>
   );
+};
+
+// Helper function to get the correct message from a localized message object
+const getLocalizedMessage = (message: string | { [locale: string]: string }): string => {
+  if (typeof message === 'string') return message;
+  const translationsManager = TranslationsManager.getInstance();
+  const currentLocale = translationsManager.getCurrentLocale();
+  return message[currentLocale] || message['en'] || Object.values(message)[0];
 };
