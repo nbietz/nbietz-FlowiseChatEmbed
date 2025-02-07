@@ -155,19 +155,38 @@ export type BotProps = {
   footer?: FooterTheme;
   sourceDocsTitle?: string;
   observersConfig?: observersConfigType;
-  starterPrompts?:
-    | string[]
-    | {
-        [locale: string]: {
-          prompts: string[];
-        };
-      };
+  starterPrompts?: string[] | { [locale: string]: { prompts: string[] } };
   starterPromptFontSize?: number;
   clearChatOnReload?: boolean;
   disclaimer?: DisclaimerPopUpTheme;
   dateTimeToggle?: DateTimeToggleTheme;
   renderHTML?: boolean;
   closeBot?: () => void;
+  theme?: {
+    chatWindow?: {
+      welcomeMessage?: string;
+      errorMessage?: string;
+      title?: string;
+      sourceDocsTitle?: string;
+      textInput?: {
+        placeholder?: string;
+        maxCharsWarningMessage?: string;
+      };
+    };
+    footer?: {
+      text?: string;
+      company?: string;
+    };
+    tooltip?: {
+      tooltipMessage?: string;
+    };
+    disclaimer?: {
+      title?: string;
+      message?: string;
+      buttonText?: string;
+      denyButtonText?: string;
+    };
+  };
 };
 
 export type LeadsConfig = {
@@ -382,7 +401,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
   const [messages, setMessages] = createSignal<MessageType[]>(
     [
       {
-        message: props.welcomeMessage ?? defaultWelcomeMessage,
+        message: props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage,
         type: 'apiMessage',
       },
     ],
@@ -1057,7 +1076,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
       setLoading(false);
       const messages: MessageType[] = [
         {
-          message: props.welcomeMessage ?? defaultWelcomeMessage,
+          message: props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage,
           type: 'apiMessage',
         },
       ];
@@ -1190,7 +1209,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
               if (message.followUpPrompts) chatHistory.followUpPrompts = message.followUpPrompts;
               return chatHistory;
             })
-          : [{ message: props.welcomeMessage ?? defaultWelcomeMessage, type: 'apiMessage' }];
+          : [{ message: props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage, type: 'apiMessage' }];
 
       const filteredMessages = loadedMessages.filter((message) => message.type !== 'leadCaptureMessage');
       setMessages([...filteredMessages]);
@@ -1251,7 +1270,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
       setLoading(false);
       setMessages([
         {
-          message: props.welcomeMessage ?? defaultWelcomeMessage,
+          message: props.theme?.chatWindow?.welcomeMessage ?? props.welcomeMessage ?? defaultWelcomeMessage,
           type: 'apiMessage',
         },
       ]);
