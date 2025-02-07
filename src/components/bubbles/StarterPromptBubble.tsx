@@ -24,7 +24,7 @@ export const StarterPromptBubble = (props: Props) => (
         'word-break': 'break-word',
         'min-width': '0',
         'max-width': '100%',
-        'line-height': '1.4'
+        'line-height': '1.4',
       }}
     >
       {props.prompt}
