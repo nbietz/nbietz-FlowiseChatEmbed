@@ -367,6 +367,14 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
   let bottomSpacer: HTMLDivElement | undefined;
   let botContainer: HTMLDivElement | undefined;
 
+  // Function to check if title text should be displayed
+  const shouldShowTitleText = () => {
+    // If title is undefined or null, don't show it
+    if (props.title === undefined || props.title === null) return false;
+    // If title is a string (including empty string), use it as is
+    return typeof props.title === 'string';
+  };
+
   const [userInput, setUserInput] = createSignal('');
   const [loading, setLoading] = createSignal(false);
   const [sourcePopupOpen, setSourcePopupOpen] = createSignal(false);
@@ -1639,7 +1647,7 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
                 <Avatar initialAvatarSrc={props.titleAvatarSrc} />
               </>
             </Show>
-            <Show when={props.title}>
+            <Show when={shouldShowTitleText()}>
               <span class="px-3 whitespace-pre-wrap font-semibold max-w-full">{props.title}</span>
             </Show>
             <div style={{ flex: 1 }} />
@@ -1807,14 +1815,16 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
           </div>
           <Show when={messages().length === 1}>
             <Show when={starterPrompts().length > 0}>
-              <div class="w-full flex flex-row flex-wrap px-5 py-[10px] gap-2">
+              <div class="w-full flex flex-row flex-wrap items-start content-start px-5 py-[10px] gap-2">
                 <For each={[...starterPrompts()]}>
                   {(key) => (
-                    <StarterPromptBubble
-                      prompt={key}
-                      onPromptClick={() => promptClick(key)}
-                      starterPromptFontSize={botProps.starterPromptFontSize} // Pass it here as a number
-                    />
+                    <div class="flex-shrink-1 min-w-0" style={{ 'max-width': 'calc(100% - 1rem)' }}>
+                      <StarterPromptBubble
+                        prompt={key}
+                        onPromptClick={() => promptClick(key)}
+                        starterPromptFontSize={botProps.starterPromptFontSize}
+                      />
+                    </div>
                   )}
                 </For>
               </div>
@@ -1827,14 +1837,16 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
                   <SparklesIcon class="w-4 h-4" />
                   <span class="text-sm text-gray-700">Try these prompts</span>
                 </div>
-                <div class="w-full flex flex-row flex-wrap px-5 py-[10px] gap-2">
+                <div class="w-full flex flex-row flex-wrap items-start content-start px-5 py-[10px] gap-2">
                   <For each={[...followUpPrompts()]}>
                     {(prompt, index) => (
-                      <FollowUpPromptBubble
-                        prompt={prompt}
-                        onPromptClick={() => followUpPromptClick(prompt)}
-                        starterPromptFontSize={botProps.starterPromptFontSize} // Pass it here as a number
-                      />
+                      <div class="flex-shrink-1 min-w-0" style={{ 'max-width': 'calc(100% - 1rem)' }}>
+                        <FollowUpPromptBubble
+                          prompt={prompt}
+                          onPromptClick={() => followUpPromptClick(prompt)}
+                          starterPromptFontSize={botProps.starterPromptFontSize}
+                        />
+                      </div>
                     )}
                   </For>
                 </div>
