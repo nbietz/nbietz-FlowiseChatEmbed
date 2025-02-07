@@ -9,13 +9,18 @@
     }
   },
   "chat": {
+    "title": "",
     "inputPlaceholder": "Escribe tu mensaje aquí...",
     "send": "Enviar",
     "clear": "Borrar Chat",
     "loading": "Cargando...",
     "errorMessage": "Algo salió mal. Por favor, inténtalo de nuevo.",
     "welcomeMessage": "¡Hola! ¿En qué te puedo ayudar?",
-    "poweredBy": "Impulsado por "
+    "poweredBy": "Impulsado por",
+    "maxCharsWarning": "Mensaje demasiado largo. Por favor, manténlo por debajo de {maxChars} caracteres.",
+    "tooltipMessage": "Chat con Asistente IA",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Fuentes:"
   },
   "avatar": {
     "start": "Iniciar Avatar",

@@ -9,13 +9,18 @@
     }
   },
   "chat": {
+    "title": "",
     "inputPlaceholder": "Введите ваше сообщение здесь...",
     "send": "Отправить",
     "clear": "Очистить чат",
     "loading": "Загрузка...",
     "errorMessage": "Что-то пошло не так. Пожалуйста, попробуйте снова.",
     "welcomeMessage": "Здравствуйте! Как я могу вам помочь сегодня?",
-    "poweredBy": "Работает на "
+    "poweredBy": "Работает на",
+    "maxCharsWarning": "Сообщение слишком длинное. Пожалуйста, ограничьте его {maxChars} символами.",
+    "tooltipMessage": "Чат с ИИ-ассистентом",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Источники:"
   },
   "avatar": {
     "start": "Запустить аватар",

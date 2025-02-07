@@ -9,13 +9,18 @@
     }
   },
   "chat": {
+    "title": "",
     "inputPlaceholder": "...הקלד את ההודעה שלך כאן",
     "send": "שלח",
     "clear": "נקה צ'אט",
     "loading": "...טוען",
     "errorMessage": ".משהו השתבש. אנא נסה שוב",
     "welcomeMessage": "?שלום! כיצד אוכל לעזור לך היום",
-    "poweredBy": "מופעל על ידי "
+    "poweredBy": "מופעל על ידי",
+    "maxCharsWarning": ".תווים {maxChars}-ההודעה ארוכה מדי. אנא הגבל ל",
+    "tooltipMessage": "צ'אט עם עוזר בינה מלאכותית",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": ":מקורות"
   },
   "avatar": {
     "start": "הפעל אווטאר",

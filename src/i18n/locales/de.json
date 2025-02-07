@@ -9,13 +9,18 @@
     }
   },
   "chat": {
+    "title": "",
     "inputPlaceholder": "Schreiben Sie Ihre Nachricht hier...",
     "send": "Senden",
     "clear": "Chat löschen",
     "loading": "Lädt...",
     "errorMessage": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
     "welcomeMessage": "Hallo! Wie kann ich Ihnen heute helfen?",
-    "poweredBy": "Bereitgestellt von "
+    "poweredBy": "Bereitgestellt von",
+    "maxCharsWarning": "Nachricht zu lang. Bitte beschränken Sie sie auf {maxChars} Zeichen.",
+    "tooltipMessage": "Chat mit KI-Assistent",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Quellen:"
   },
   "avatar": {
     "start": "Avatar starten",

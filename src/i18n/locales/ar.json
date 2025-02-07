@@ -9,13 +9,18 @@
     }
   },
   "chat": {
+    "title": "",
     "inputPlaceholder": "اكتب رسالتك هنا...",
     "send": "إرسال",
     "clear": "مسح المحادثة",
     "loading": "جارٍ التحميل...",
     "errorMessage": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     "welcomeMessage": "مرحباً! كيف يمكنني مساعدتك اليوم؟",
-    "poweredBy": "مشغل بواسطة "
+    "poweredBy": "مشغل بواسطة",
+    "maxCharsWarning": "الرسالة طويلة جداً. يرجى الاقتصار على {maxChars} حرف.",
+    "tooltipMessage": "محادثة مع المساعد الذكي",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "المصادر:"
   },
   "avatar": {
     "start": "بدء الشخصية الافتراضية",

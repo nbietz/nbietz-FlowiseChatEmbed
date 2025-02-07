@@ -9,13 +9,18 @@
     }
   },
   "chat": {
+    "title": "",
     "inputPlaceholder": "Mesajınızı buraya yazın...",
     "send": "Gönder",
     "clear": "Sohbeti Temizle",
     "loading": "Yükleniyor...",
     "errorMessage": "Bir şeyler yanlış gitti. Lütfen tekrar deneyin.",
     "welcomeMessage": "Merhaba! Size bugün nasıl yardımcı olabilirim?",
-    "poweredBy": "Destekleyen: "
+    "poweredBy": "Destekleyen:",
+    "maxCharsWarning": "Mesaj çok uzun. Lütfen {maxChars} karakterle sınırlayın.",
+    "tooltipMessage": "Yapay Zeka Asistanı ile Sohbet",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Kaynaklar:"
   },
   "avatar": {
     "start": "Avatarı Başlat",

@@ -9,13 +9,18 @@
     }
   },
   "chat": {
+    "title": "",
     "inputPlaceholder": "Écrivez votre message ici...",
     "send": "Envoyer",
     "clear": "Effacer la discussion",
     "loading": "Chargement...",
     "errorMessage": "Une erreur s'est produite. Veuillez réessayer.",
     "welcomeMessage": "Bonjour ! Comment puis-je vous aider aujourd'hui ?",
-    "poweredBy": "Propulsé par "
+    "poweredBy": "Propulsé par",
+    "maxCharsWarning": "Message trop long. Veuillez le limiter à {maxChars} caractères.",
+    "tooltipMessage": "Chat avec l'Assistant IA",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Sources :"
   },
   "avatar": {
     "start": "Démarrer l'avatar",

@@ -9,13 +9,18 @@
     }
   },
   "chat": {
+    "title": "",
     "inputPlaceholder": "Type your message here...",
     "send": "Send",
     "clear": "Clear Chat",
     "loading": "Loading...",
     "errorMessage": "Something went wrong. Please try again.",
     "welcomeMessage": "Hello! How can I help you today?",
-    "poweredBy": "Powered by "
+    "poweredBy": "Powered by",
+    "maxCharsWarning": "Message is too long. Please keep it under {maxChars} characters.",
+    "tooltipMessage": "Chat with AI Assistant",
+    "company": "FlowiseAI",
+    "sourceDocsTitle": "Sources:"
   },
   "avatar": {
     "start": "Start Avatar",
