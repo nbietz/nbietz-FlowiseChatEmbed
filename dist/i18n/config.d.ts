@@ -1,4 +1,4 @@
-export type Locale = 'en' | 'es' | 'es-MX' | 'fr' | 'de' | 'zh' | 'hi' | 'ar' | 'ja' | 'ru' | 'tr' | 'he' | string;
+export type Locale = 'en' | 'es' | 'es-MX' | 'fr' | 'de' | 'zh' | 'hi' | 'ar' | 'ja' | 'ru' | 'tr' | 'he' | 'it' | 'pt-BR' | 'pt' | 'ko' | 'id' | 'pl' | 'vi' | string;
 export interface LocaleConfig {
     code: Locale;
     name: string;
