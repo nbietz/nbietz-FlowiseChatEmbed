@@ -1693,12 +1693,12 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
                 <span style={{ 'font-family': 'Poppins, sans-serif' }}>Clear</span>
               </DeleteButton>
               <Show when={props.closeBot}>
-                <button 
-                  class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full" 
-                  onClick={props.closeBot} 
+                <button
+                  class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full"
+                  onClick={props.closeBot}
                   title="Close chat"
                   style={{
-                    color: props.titleTextColor || props.bubbleTextColor || defaultBackgroundColor
+                    color: props.titleTextColor || props.bubbleTextColor || defaultBackgroundColor,
                   }}
                 >
                   <svg
