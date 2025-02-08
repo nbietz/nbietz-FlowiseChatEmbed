@@ -1607,7 +1607,6 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
       <div
         ref={botContainer}
         class={'relative flex w-full h-full text-base overflow-hidden flex-col items-center chatbot-container ' + props.class}
-        onDragEnter={handleDrag}
         style={{
           'min-height': '100%',
           height: '100%',
@@ -1617,46 +1616,17 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
         }}
         part="bot-content"
       >
-        {/* Avatar Video Section - Fixed positioned */}
+        {/* Avatar Video Section */}
         <Show when={props.avatar && avatarStream()}>
           <div class="fixed top-0 left-0 w-full z-10" style={{ 'background-color': 'transparent' }}>
             <AvatarVideo class={isAvatarTalking() ? '' : ''} stream={avatarStream()} />
           </div>
         </Show>
 
-        {isDragActive() && (
-          <div
-            class="absolute top-0 left-0 bottom-0 right-0 w-full h-full z-50"
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragEnd={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-          />
-        )}
-        {isDragActive() && (uploadsConfig()?.isImageUploadAllowed || isFileUploadAllowed()) && (
-          <div
-            class="absolute top-0 left-0 bottom-0 right-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm text-white z-40 gap-2 border-2 border-dashed"
-            style={{ 'border-color': props.bubbleBackgroundColor }}
-          >
-            <h2 class="text-xl font-semibold">Drop here to upload</h2>
-            <For each={[...(uploadsConfig()?.imgUploadSizeAndTypes || []), ...(uploadsConfig()?.fileUploadSizeAndTypes || [])]}>
-              {(allowed) => {
-                return (
-                  <>
-                    <span>{allowed.fileTypes?.join(', ')}</span>
-                    {allowed.maxUploadSize && <span>Max Allowed Size: {allowed.maxUploadSize} MB</span>}
-                  </>
-                );
-              }}
-            </For>
-          </div>
-        )}
-
         {/* Title Bar */}
-        {props.showTitle ? (
+        {props.showTitle || (props.avatar && avatarStream()) ? (
           <div
-            class="flex flex-row items-center w-full h-[50px] z-20 backdrop-blur-sm"
+            class="flex flex-row items-center w-full h-[50px] z-20 backdrop-blur-sm relative"
             style={{
               background: props.titleBackgroundColor || props.bubbleBackgroundColor || defaultTitleBackgroundColor,
               color: props.titleTextColor || props.bubbleTextColor || defaultBackgroundColor,
@@ -1665,76 +1635,91 @@ export const Bot = (botProps: BotProps & { class?: string }): JSX.Element => {
               border: 'none',
             }}
           >
-            <Show when={props.titleAvatarSrc}>
-              <>
-                <div style={{ width: '15px' }} />
-                <Avatar initialAvatarSrc={props.titleAvatarSrc} />
-              </>
-            </Show>
-            <Show when={shouldShowTitleText()}>
-              <span class="px-3 whitespace-pre-wrap font-semibold max-w-full">{props.title}</span>
-            </Show>
-            <div style={{ flex: 1 }} />
-            {/* Avatar Control Buttons */}
-            <Show when={props.avatar}>
-              <div class="flex items-center gap-2 mx-2">
-                <Show when={avatarStream()}>
-                  <button
-                    class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
-                    onClick={handleInterruptAvatar}
-                    title={t('avatar.interrupt')}
-                  >
-                    {t('avatar.interrupt')}
-                  </button>
-                  <button
-                    class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
-                    onClick={handleEndAvatarSession}
-                    title={t('avatar.end')}
-                  >
-                    {t('avatar.end')}
-                  </button>
-                </Show>
-                <Show when={!avatarStream()}>
-                  <button
-                    class="px-3 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium"
-                    onClick={handleStartAvatarSession}
-                    title={t('avatar.start')}
-                  >
-                    {t('avatar.start')}
-                  </button>
-                </Show>
-              </div>
-            </Show>
-            <DeleteButton
-              sendButtonColor={props.bubbleTextColor}
-              type="button"
-              isDisabled={messages().length === 1}
-              class="my-2 ml-2"
-              on:click={clearChat}
-            >
-              <span style={{ 'font-family': 'Poppins, sans-serif' }}>Clear</span>
-            </DeleteButton>
-            {/* Close Button */}
-            <Show when={props.closeBot}>
-              <button class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full mx-2" onClick={props.closeBot} title="Close chat">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+            {/* Left section: Avatar and Title */}
+            <div class="flex items-center flex-shrink-0">
+              <Show when={props.titleAvatarSrc}>
+                <>
+                  <div style={{ width: '15px' }} />
+                  <Avatar initialAvatarSrc={props.titleAvatarSrc} />
+                </>
+              </Show>
+              <Show when={shouldShowTitleText()}>
+                <span class="px-3 whitespace-pre-wrap font-semibold max-w-full">{props.title}</span>
+              </Show>
+            </div>
+
+            {/* Center section: Flexible space and Avatar Controls */}
+            <div class="flex items-center justify-center flex-grow min-w-0 overflow-hidden">
+              <Show when={props.avatar}>
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                  <Show when={avatarStream()}>
+                    <button
+                      class="px-2 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium whitespace-nowrap"
+                      onClick={handleInterruptAvatar}
+                      title={t('avatar.interrupt')}
+                    >
+                      {t('avatar.interrupt')}
+                    </button>
+                    <button
+                      class="px-2 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium whitespace-nowrap"
+                      onClick={handleEndAvatarSession}
+                      title={t('avatar.end')}
+                    >
+                      {t('avatar.end')}
+                    </button>
+                  </Show>
+                  <Show when={!avatarStream()}>
+                    <button
+                      class="px-2 py-1 rounded hover:bg-black/10 transition-colors duration-200 text-sm font-medium whitespace-nowrap"
+                      onClick={handleStartAvatarSession}
+                      title={t('avatar.start')}
+                    >
+                      {t('avatar.start')}
+                    </button>
+                  </Show>
+                </div>
+              </Show>
+            </div>
+
+            {/* Right section: Action buttons with fixed width */}
+            <div class="flex items-center flex-shrink-0">
+              <DeleteButton
+                sendButtonColor={props.bubbleTextColor}
+                type="button"
+                isDisabled={messages().length === 1}
+                class="p-1 mr-0.5"
+                on:click={clearChat}
+              >
+                <span style={{ 'font-family': 'Poppins, sans-serif' }}>Clear</span>
+              </DeleteButton>
+              <Show when={props.closeBot}>
+                <button 
+                  class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full" 
+                  onClick={props.closeBot} 
+                  title="Close chat"
+                  style={{
+                    color: props.titleTextColor || props.bubbleTextColor || defaultBackgroundColor
+                  }}
                 >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </Show>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </Show>
+            </div>
           </div>
         ) : (
-          // Add close button to title bar even when showTitle is false
+          // Add close button outside title bar when no avatar and showTitle is false
           <Show when={props.closeBot}>
             <div class="flex justify-end w-full z-20">
               <button class="p-2 hover:bg-black/10 transition-colors duration-200 rounded-full m-2" onClick={props.closeBot} title="Close chat">

@@ -30,7 +30,7 @@ export const SendButton = (props: SendButtonProps) => {
 export const DeleteButton = (props: SendButtonProps) => {
   // Check if <flowise-fullchatbot> is present in the DOM
   const isFullChatbot = document.querySelector('flowise-fullchatbot') !== null;
-  const paddingClass = isFullChatbot ? 'px-4' : 'px-12';
+  const paddingClass = isFullChatbot ? 'px-2' : 'px-2';
 
   return (
     <button
