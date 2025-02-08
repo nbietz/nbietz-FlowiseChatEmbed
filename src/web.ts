@@ -74,6 +74,9 @@ export default class Chatbot {
         tooltip: {
           ...config.theme?.tooltip,
           tooltipMessage: getTranslation(config.theme?.tooltip?.tooltipMessage, 'chat.tooltipMessage'),
+          tooltipBackgroundColor: config.theme?.tooltip?.tooltipBackgroundColor,
+          tooltipTextColor: config.theme?.tooltip?.tooltipTextColor,
+          tooltipFontSize: config.theme?.tooltip?.tooltipFontSize,
         },
         disclaimer: {
           ...config.theme?.disclaimer,
